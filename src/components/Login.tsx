@@ -63,8 +63,8 @@ export const Login = () => {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-50">
-            <div className="bg-white p-8 rounded-xl w-full max-w-sm">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center sm:flex flex-col sm:gap-5 md:flex-row md:gap-5">
+            <div className=" bg-white p-8 rounded-xl w-full max-w-sm sm:order-last md:order-first">
                 {/* Logo */}
                 <div className="flex justify-center mb-6">
                     <img src="images/login-logo.jpg" alt="Logo" className="w-32 h-32" />
@@ -148,8 +148,8 @@ export const Login = () => {
                 </form>
             </div>
 
-            <div className="hidden md:block w-1/2 pl-4">
-                <img src="images/login-picture.jpg" alt="Student" className="w-full h-full object-cover rounded-lg" />       
+            <div className="hidden sm:block sm:h-[100vh] relative w-full md:h-[100vh]">
+                <img src="images/login-picture.jpg" alt="Student" className="absolute w-full h-full top-0 right-0 bottom-0 left-0" />
             </div>
         </div>
     );

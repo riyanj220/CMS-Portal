@@ -2,7 +2,8 @@ import { Navigate, Route } from "react-router";
 import { createBrowserRouter, createRoutesFromElements } from "react-router";
 import { Login } from "./components/Login";
 import { RootLayout } from "./components/RootLayout";
-import { Dashboard } from "./components/dashboard";
+import { Dashboard } from "./components/Dashboard";
+
 
 
 export const router = createBrowserRouter(

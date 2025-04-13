@@ -9,8 +9,8 @@ const label = { inputProps: { 'aria-label': 'Remember me' } };
 export const Login = () => {
     const navigate = useNavigate();
 
-    const [registrationNo, setRegistrationNo] = useState('');
-    const [password, setPassword] = useState('');
+    const [registrationNo, setRegistrationNo] = useState('user');
+    const [password, setPassword] = useState('password');
     const [showPassword, setShowPassword] = useState(false);
 
     // Error states for each field

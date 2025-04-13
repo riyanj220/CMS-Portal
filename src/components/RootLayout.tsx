@@ -1,13 +1,12 @@
 import { Outlet } from "react-router";
+import Sidebar from "./Sidebar";
 
 
 export const RootLayout = () => {
     return (
         <div>
-            siderbar header etc
-
+            <Sidebar/>
             <div>
-                <h1>Cms portal</h1>
                 <Outlet/>
             </div>
 

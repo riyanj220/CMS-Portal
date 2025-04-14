@@ -1,148 +1,155 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { createTheme } from '@mui/material/styles';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { useDemoRouter } from '@toolpad/core/internal';
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import AssignmentAddIcon from '@mui/icons-material/AssignmentAdd';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
-import QuizIcon from '@mui/icons-material/Quiz';
+import { useState } from 'react';
+import { Dashboard as DashboardIcon, CreditCard as CreditCardIcon, AssignmentAdd as AssignmentAddIcon, FormatListBulleted as FormatListBulletedIcon, LibraryBooks as LibraryBooksIcon, Quiz as QuizIcon } from '@mui/icons-material';
+import { Link } from 'react-router';
+import clsx from 'clsx';
 
-const NAVIGATION: Navigation = [
-  {
-    kind: 'header',
-    title: '',
-  },
+const NAV_ITEMS = [
+  { kind: 'header', title: '' },
+  
+  // Main Navigation Items
   {
     segment: 'dashboard',
     title: 'Dashboard',
     icon: <DashboardIcon />,
+    link: '/dashboard',
   },
+  
   {
     segment: 'general',
     title: 'General',
-    icon: <FormatListBulletedIcon/>,
+    icon: <FormatListBulletedIcon />,
+    link: '/general',
     children: [
-        {
-            segment: 'time table',
-            title: 'Time table',
-        },
-        {
-            segment: 'todo list',
-            title: 'Todo list',
-        },
-        {
-            segment: 'attendance',
-            title: 'Attendance',
-        },
-        {
-            segment: 'online survey',
-            title: 'Online survey',
-        },
-        {
-            segment: 'change password',
-            title: 'Change password',
-        },
-        {
-            segment: 'student program outcome',
-            title: 'Student program outcome (PLO) attainment',
-        },
-    ]
+      {
+        segment: 'time table',
+        title: 'Time Table',
+        link: '/general/time-table',
+      },
+      {
+        segment: 'todo list',
+        title: 'Todo List',
+        link: '/general/todo-list',
+      },
+      {
+        segment: 'attendance',
+        title: 'Attendance',
+        link: '/general/attendance',
+      },
+      {
+        segment: 'online survey',
+        title: 'Online Survey',
+        link: '/general/online-survey',
+      },
+      {
+        segment: 'change password',
+        title: 'Change Password',
+        link: '/general/change-password',
+      },
+      {
+        segment: 'student program outcome',
+        title: 'Student Program Outcome (PLO) Attainment',
+        link: '/general/student-program-outcome',
+      },
+    ],
   },
-  {
-    kind: 'divider',
-  },
+
+  { kind: 'divider' },
+
   {
     segment: 'course',
     title: 'Course',
-    icon: <LibraryBooksIcon/>,
+    icon: <LibraryBooksIcon />,
+    link: '/courses',
   },
+
   {
     segment: 'registration',
     title: 'Registration',
     icon: <AssignmentAddIcon />,
+    link: '/registration',
   },
-  {
-    kind: 'divider',
-  },
+
+  { kind: 'divider' },
+
   {
     segment: 'exam',
     title: 'Exam',
     icon: <QuizIcon />,
-    children:[
-        {
-            segment: 'print unofficial transcript',
-            title: 'Print unofficial transcript'
-        },
-        {
-            segment: 'exam seating plan',
-            title: 'Exam seating plan'
-        },
-
-        {
-            segment: 'assesment result',
-            title: 'Assesment result'
-        },
-    ]
+    link: '/exam',
+    children: [
+      {
+        segment: 'print unofficial transcript',
+        title: 'Print Unofficial Transcript',
+        link: '/exam/print-unofficial-transcript',
+      },
+      {
+        segment: 'exam seating plan',
+        title: 'Exam Seating Plan',
+        link: '/exam/exam-seating-plan',
+      },
+      {
+        segment: 'assessment result',
+        title: 'Assessment Result',
+        link: '/exam/assessment-result',
+      },
+    ],
   },
+
   {
     segment: 'fee',
     title: 'Fee',
     icon: <CreditCardIcon />,
+    link: '/fee',
   },
 ];
 
-const demoTheme = createTheme({
-  cssVariables: {
-    colorSchemeSelector: 'data-toolpad-color-scheme',
-  },
-  colorSchemes: { light: true, dark: true },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 600,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-});
+export default function Sidebar() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);  // State to handle submenu toggle
 
-function DemoPageContent({ pathname }: { pathname: string }) {
-  return (
-    <Box
-      sx={{
-        py: 4,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-      }}
-    >
-      <Typography>Dashboard content for {pathname}</Typography>
-    </Box>
-  );
-}
-
-export default function DashboardLayoutBasic() {
-
-  const router = useDemoRouter('/dashboard');
+  const handleSubmenuToggle = (segment: string) => {
+    setOpenSubmenu(openSubmenu === segment ? null : segment);  // Toggle submenu
+  };
 
   return (
-    // preview-start
-    <AppProvider
-      navigation={NAVIGATION}
-      router={router}
-      theme={demoTheme}
-      window={undefined}
-    >
-      <DashboardLayout>
-        <DemoPageContent pathname={router.pathname} />
-      </DashboardLayout>
-    </AppProvider>
-    // preview-end
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <div className={clsx('bg-gray-800 text-white w-64', { 'block': isSidebarOpen, 'hidden': !isSidebarOpen })}>
+        <div>
+          {NAV_ITEMS.map((item, index) => {
+            if (item.kind === 'divider') {
+              return <hr key={index} className="my-2" />;
+            }
+
+            return (
+              <div key={index}>
+                <Link to={item.link || '#'} onClick={item.children ? () => handleSubmenuToggle(item.segment) : undefined}>
+                  <div className="flex items-center p-3 text-white hover:bg-gray-600">
+                    {item.icon}
+                    <span className="ml-4">{item.title}</span>
+                    {item.children && (
+                      <span className="ml-auto">{openSubmenu === item.segment ? '▲' : '▼'}</span>  // Show an arrow for submenus
+                    )}
+                  </div>
+                </Link>
+
+                {/* Render Submenu if available */}
+                {item.children && openSubmenu === item.segment && (
+                  <div className="pl-6">
+                    {item.children.map((subItem, subIndex) => (
+                      <Link key={subIndex} to={subItem.link}>
+                        <div className="flex items-center p-3 text-white hover:bg-gray-500">
+                          <span className="ml-4">{subItem.title}</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 }

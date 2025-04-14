@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Dashboard as DashboardIcon, CreditCard as CreditCardIcon, AssignmentAdd as AssignmentAddIcon, FormatListBulleted as FormatListBulletedIcon, LibraryBooks as LibraryBooksIcon, Quiz as QuizIcon } from '@mui/icons-material';
 import { Link } from 'react-router';
-import clsx from 'clsx';
+// import clsx from 'clsx';
 
 const NAV_ITEMS = [
   { kind: 'header', title: '' },
@@ -104,7 +104,7 @@ const NAV_ITEMS = [
 ];
 
 export default function Sidebar() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);  // State to handle submenu toggle
 
   const handleSubmenuToggle = (segment: string) => {
@@ -114,7 +114,7 @@ export default function Sidebar() {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <div className={clsx('bg-gray-800 text-white w-64', { 'block': isSidebarOpen, 'hidden': !isSidebarOpen })}>
+      {/* <div className={clsx('bg-gray-800 text-white w-64', { 'block': isSidebarOpen, 'hidden': !isSidebarOpen })}> */}
         <div>
           {NAV_ITEMS.map((item, index) => {
             if (item.kind === 'divider') {
@@ -150,6 +150,6 @@ export default function Sidebar() {
           })}
         </div>
       </div>
-    </div>
+    // </div>
   );
 }

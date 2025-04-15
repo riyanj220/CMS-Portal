@@ -12,7 +12,7 @@ const AppBarComponent = () => {
 
   return (
     <>
-      <nav className="p-5 h-20 bg-gray-800 flex items-center justify-between">
+      <nav className="p-4 h-16 bg-gray-800 flex items-center justify-between sm:h-20 sm:p-5">
         {/* Left Section - Logo and University Name */}
         <div className="flex items-center space-x-4">
           <div className="w-10 h-10">

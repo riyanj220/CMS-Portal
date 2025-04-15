@@ -9,21 +9,37 @@ const AppSidebar = ({ children }: { children: ReactNode }) => {
   const [expanded, setExpanded] = useState(true);
 
   return (
-    <aside className={`h-screen flex flex-col transition-all duration-300 ${expanded ? "max-w-64" : "max-w-20"}`}>
+    <aside className={`h-screen flex flex-col transition-all duration-300 ${expanded ? "max-w-52 sm:max-w-64" : "max-w-16 sm:max-w-20"}`}>
       <nav className="h-full flex flex-col bg-white border-r shadow-xl rounded-lg">
         {/* Sidebar Header */}
-        <div className={`p-4 pb-2 flex justify-between items-center`}>
+        <div
+          className={`p-3 flex justify-between items-center sm:p-4 ${
+            expanded ? "flex-row" : "flex-col"
+          }`}
+        >
+          {/* Text "Collapse" when expanded */}
+          {expanded && (
+            <span className="text-gray-600 ml-2">Collapse sidebar</span>
+          )}
+
           <button
             onClick={() => setExpanded((curr) => !curr)}
             className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition"
           >
-            {expanded ? <ChevronFirst size={20} /> : <ChevronLast size={20} />}
+            {expanded ? (
+              <ChevronFirst size={20} />
+            ) : (
+              <ChevronLast size={20} />
+            )}
           </button>
         </div>
 
+        {/* Divider */}
+        {expanded && <div className="border-t border-gray-300" />}
+
         {/* Sidebar Content */}
         <SidebarContext.Provider value={{ expanded }}>
-          <ul className="flex-1 px-3 py-4">
+          <ul className="flex-1 py-4 sm:px-3">
             {children}
           </ul>
         </SidebarContext.Provider>
@@ -43,7 +59,7 @@ const AppSidebar = ({ children }: { children: ReactNode }) => {
           </div>
           <MoreVertical size={20} className="text-white ml-auto" />
         </div>}
-        
+
       </nav>
     </aside>
   );

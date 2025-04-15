@@ -16,10 +16,11 @@ const AppBarComponent = () => {
         {/* Left Section - Logo and University Name */}
         <div className="flex items-center space-x-4">
           <div className="w-10 h-10">
-            <img src="./images/login-logo.png" alt="University Logo" />
+            <img src="./images/login-logo.png" alt="University Logo" className='min-w-10 min-h-10' />
           </div>
           <div className="text-white text-lg">
-            Sir Syed University of Engineering & Technology
+            <span className="hidden sm:block">Sir Syed University of Engineering & Technology</span>
+            <span className="sm:hidden">SSUET</span>
           </div>
         </div>
 

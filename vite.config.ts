@@ -14,4 +14,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),  // Add this line to alias '@' to the 'src' directory
     },
   },
+  server: {
+    host: '0.0.0.0'
+  }
 })

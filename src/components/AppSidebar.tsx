@@ -1,111 +1,132 @@
-import { ChevronFirst, ChevronLast, MoreVertical } from "lucide-react";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { useState } from "react";
+// MUI Icons
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import { ChevronRightIcon, ChevronLeftIcon, ChevronDownIcon } from "lucide-react";
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import MenuIcon from '@mui/icons-material/Menu';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import SchoolIcon from '@mui/icons-material/School';
+import QuizIcon from '@mui/icons-material/Quiz';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 
-const SidebarContext = createContext<{ expanded: boolean }>({
-  expanded: true, // default value for 'expanded'
-});
+type MenuKeys = "general" | "course" | "registration" | "fee" | "exam" | 'profile';
 
-const AppSidebar = ({ children }: { children: ReactNode }) => {
-  const [expanded, setExpanded] = useState(true);
+const App = () => {
+  const [open, setOpen] = useState(true);
+  const [subMenus, setSubMenus] = useState({
+    general: false,
+    course: false,
+    registration: false,
+    fee: false,
+    exam: false,
+    profile: false,
+  });
 
-  return (
-    <aside className={`h-screen flex flex-col transition-all duration-300 ${expanded ? "max-w-52 sm:max-w-64" : "max-w-16 sm:max-w-20"}`}>
-      <nav className="h-full flex flex-col bg-white border-r shadow-xl rounded-lg">
-        {/* Sidebar Header */}
-        <div
-          className={`p-3 flex justify-between items-center sm:p-4 ${
-            expanded ? "flex-row" : "flex-col"
-          }`}
-        >
-          {/* Text "Collapse" when expanded */}
-          {expanded && (
-            <span className="text-gray-600 ml-2">Collapse sidebar</span>
-          )}
+  const toggleSubMenu = (menu: MenuKeys) => {
+    setSubMenus((prev) => ({
+      ...prev,
+      [menu]: !prev[menu],
+    }));
+  };
 
-          <button
-            onClick={() => setExpanded((curr) => !curr)}
-            className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition"
-          >
-            {expanded ? (
-              <ChevronFirst size={20} />
-            ) : (
-              <ChevronLast size={20} />
-            )}
-          </button>
-        </div>
-
-        {/* Divider */}
-        {expanded && <div className="border-t border-gray-300" />}
-
-        {/* Sidebar Content */}
-        <SidebarContext.Provider value={{ expanded }}>
-          <ul className="flex-1 py-4 sm:px-3">
-            {children}
-          </ul>
-        </SidebarContext.Provider>
-
-        {/* Footer Section (Profile) */}
-        {expanded && <div className={`hidden sm:flex items-center p-3 mt-4`}>
-          <img
-            src="https://ui-avatars.com/api/?background=c7d2fe&color=3730a3&bold=true"
-            alt="User Avatar"
-            className="w-12 h-12 rounded-full border-2 border-blue-300"
-          />
-          <div
-            className={`ml-3 flex flex-col justify-center w-52`}
-          >
-            <h4 className="font-semibold text-black">Riyan Jamil</h4>
-            <span className="text-xs text-black-300">2023F-BSE-075</span>
-          </div>
-          <MoreVertical size={20} className="text-white ml-auto" />
-        </div>}
-
-      </nav>
-    </aside>
-  );
-};
-
-type SidebarItemProps = {
-  icon: ReactNode;
-  text: string;
-  active?: boolean;
-  alert?: boolean;
-};
-
-export function SidebarItem({ icon, text, active = false, alert = false }: SidebarItemProps) {
-  const { expanded } = useContext(SidebarContext);
+  const Menus = [
+    { title: "Dashboard", icon: <DashboardIcon /> },
+    {
+      title: "General",
+      icon: <MenuIcon />,
+      gap: true,
+      subMenu: ["Time table", "Todo list", "Attendance", "Announcements"],
+      key: "general",
+    },
+    { title: "Course", icon: <SchoolIcon />, key: "course" },
+    { title: "Registration", icon: <LibraryBooksIcon />, key: "registration" },
+    { title: "Fee", icon: <CreditCardIcon />, key: "fee" },
+    {
+      title: "Exam",
+      icon: <QuizIcon />,
+      subMenu: ["Print unofficial transcript", "Exam seating plan", "Assessment result", "Print admit card"],
+      key: "exam"
+    },
+    { title: "Profile", icon: <AccountBoxIcon />, key: "profile" },
+  ];
 
   return (
-    <li
-      className={`relative flex items-center py-2 px-4 my-2 font-medium rounded-md cursor-pointer transition-all group ${
-        active
-          ? "bg-gradient-to-tr from-indigo-200 to-indigo-100 text-indigo-800"
-          : "hover:bg-indigo-50 text-gray-600"
-      }`}
-    >
-      {icon}
-      <span
-        className={`overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"}`}
+    <div className="w-72 flex flex-col h-screen">
+      {/* Sidebar section */}
+      <div
+        className={`${
+          open ? "w-72 p-5" : "w-20 p-4"
+        } bg-[#1E293B] h-screen pt-8 relative duration-300 ease-in-out`}
       >
-        {text}
-      </span>
-      {alert && (
+        {/* Toggle button sections */}
         <div
-          className={`absolute right-2 w-2 h-2 rounded-full bg-indigo-400 ${
-            expanded ? "" : "top-2"
-          }`}
-        />
-      )}
-
-      {!expanded && (
-        <div
-          className={`absolute left-full rounded-md px-2 py-1 ml-6 bg-indigo-100 text-indigo-800 text-sm invisible opacity-0 group-hover:visible group-hover:opacity-100`}
+          className={`absolute cursor-pointer -right-4 top-9 w-8 h-8 p-0.5 bg-gray-50 border-gray-50 border-2 rounded-full text-xl flex items-center justify-center ${
+            !open && "rotate-180"
+          } transition-all ease-in-out duration-300`}
+          onClick={() => setOpen(!open)}
         >
-          {text}
+          {open ? <ChevronLeftIcon /> : <ChevronLeftIcon />}
         </div>
-      )}
-    </li>
-  );
-}
 
-export default AppSidebar;
+        {/* Sidebar Navbar Items section */}
+        <ul className="pt-6 space-y-0.5 overflow-y-auto h-full">
+          {Menus.map((Menu, index) => (
+            <li
+              key={index}
+              className={`flex flex-col rounded-md py-3 px-4 cursor-pointer hover:text-white text-gray-200 hover:bg-indigo-800/50 transition-all ease-in-out duration-300 ${
+                Menu.gap ? "mt-9" : "mt-2"
+              } ${index === 0 && "bg-indigo-700/40"}`}
+            >
+              <div
+                className="flex items-center justify-between gap-x-4"
+                onClick={() => Menu.key && toggleSubMenu(Menu.key as MenuKeys)}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{Menu.icon}</span>
+                  <span
+                    className={`${
+                      !open && "hidden"
+                    } origin-left ease-in-out duration-300`}
+                  >
+                    {Menu.title}
+                  </span>
+                </div>
+
+                {Menu.subMenu && (
+                  <span
+                    className={`ml-auto cursor-pointer text-sm ${
+                      Menu.key && subMenus[Menu.key as MenuKeys] ? "rotate-360" : ""
+                    } transition-transform ease-in-out duration-300 ${
+                      !open ? "hidden" : ""
+                    }`}
+                  >
+                    {Menu.key && subMenus[Menu.key as MenuKeys] ? <ChevronDownIcon /> : <ChevronRightIcon />}
+                  </span>
+                )}
+              </div>
+
+              {/* Sidebar submenus Navbar Items */}
+              {open && Menu.subMenu && Menu.key && subMenus[Menu.key as MenuKeys] && (
+                <ul className="pl-3 pt-4 text-gray-300">
+                  {Menu.subMenu.map((subMenu, subIndex) => (
+                    <li
+                      key={subIndex}
+                      className="text-sm flex items-center gap-x-2 py-3 px-2 hover:bg-indigo-600 rounded-lg"
+                    >
+                      <span className="text-gray-400">
+                        <ChevronRightIcon className="text-xs" />
+                      </span>
+                      {subMenu}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+export default App;

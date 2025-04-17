@@ -38,10 +38,10 @@ const AppBarComponent = () => {
           </div>
           {/* Dropdown menu for logout */}
           {menuOpen && (
-            <div className="absolute right-0 bg-gray-600 text-white rounded-lg shadow-lg p-2 mt-2 w-32">
+            <div className="absolute right-0 bg-gray-600 text-white rounded-lg shadow-lg p-2 mt-2 w-24 sm:w-32">
               <div
                 onClick={handleLogout}
-                className="p-2 text-center cursor-pointer hover:bg-gray-500"
+                className="sm:p-2 text-center cursor-pointer hover:bg-gray-500"
               >
                 Logout
               </div>

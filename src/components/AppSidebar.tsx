@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // MUI Icons
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { ChevronRightIcon, ChevronLeftIcon, ChevronDownIcon } from "lucide-react";
@@ -29,6 +29,26 @@ const App = () => {
     }));
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      if(window.innerWidth<768){
+        setOpen(false);
+      }
+
+      else{
+        setOpen(true);
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+
+  },[])
+
   const Menus = [
     { title: "Dashboard", icon: <DashboardIcon /> },
     {
@@ -51,11 +71,11 @@ const App = () => {
   ];
 
   return (
-    <div className="w-72 flex flex-col h-screen">
+    <div className={`${open? "w-60 flex flex-col h-screen sm:w-72" : "w-16 h-full sm:w-24 "}`}>
       {/* Sidebar section */}
       <div
         className={`${
-          open ? "w-72 p-5" : "w-20 p-4"
+          open ? "w-60 sm:w-72 p-5" : "w-16 p-1 sm:w-24 sm:p-5"
         } bg-[#1E293B] h-screen pt-8 relative duration-300 ease-in-out`}
       >
         {/* Toggle button sections */}

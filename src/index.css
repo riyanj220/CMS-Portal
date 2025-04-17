@@ -61,6 +61,10 @@
     color: black;
   }
 } */
+html, body {
+  height: 100%;  /* Ensure full height */
+}
+
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

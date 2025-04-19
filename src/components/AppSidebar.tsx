@@ -65,10 +65,10 @@ const App = () => {
   ];
 
   return (
-    <div className={`max-h-[90vh] h-full overflow-y-auto ${open? "w-60 flex flex-col  sm:w-72" : "w-16 h-full sm:w-24 overflow-y-hidden"}`}>
+    <div className={`sticky top-0 max-h-screen overflow-y-auto ${open? "w-60 flex flex-col  sm:w-72" : "w-16 sm:w-24 overflow-y-hidden"}`}>
       {/* Sidebar section */}
       <div
-        className={`${
+        className={` ${
           open ? "w-60 sm:w-72 p-5" : "w-16 p-1 sm:w-24 sm:p-5"
         } bg-[#1E293B] h-screen pt-8 relative duration-300 ease-in-out overflow-x-hidden`}
       >
@@ -83,7 +83,7 @@ const App = () => {
         </div>
 
         {/* Sidebar Navbar Items section */}
-        <ul className="pt-6 space-y-0.5 overflow-y-auto h-full">
+        <ul className="pt-6 space-y-0.5 overflow-y-auto max-h-screen">
           {Menus.map((Menu, index) => (
             <li
               key={index}

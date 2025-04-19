@@ -3,6 +3,13 @@ import { createBrowserRouter, createRoutesFromElements } from "react-router";
 import { Login } from "./components/Login";
 import { RootLayout } from "./components/RootLayout";
 import { Dashboard } from "./components/Dashboard";
+import General from "./components/General";
+import Course from "./components/Course";
+import Registration from "./components/Registration";
+import Fee from "./components/Fee";
+import Exam from "./components/Exam";
+import Profile from "./components/Profile";
+
 
 
 
@@ -13,7 +20,16 @@ export const router = createBrowserRouter(
             <Route path="/login" element={<Login/>}></Route>
 
             <Route path="/dashboard" element={<RootLayout/>}>
-                <Route path="dashboard" element={<Dashboard/>}></Route>
+                <Route index element={<Dashboard/>}></Route>
+                <Route path="general" element={<General/>} />
+                <Route path="course" element={<Course />} />
+                <Route path="registration" element={<Registration />} />
+                <Route path="fee" element={<Fee />} />
+                <Route path="exam" element={<Exam />} />
+                <Route path="profile" element={<Profile />} />
+
+                <Route path="general/:submenu/" element={<General/>} />
+                <Route path="exam/:submenu/" element={<Exam/>} />
             </Route>
         </>
     ),

@@ -9,11 +9,14 @@ import SchoolIcon from '@mui/icons-material/School';
 import QuizIcon from '@mui/icons-material/Quiz';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import { Link } from "react-router";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type MenuKeys = "general" | "course" | "registration" | "fee" | "exam" | 'profile';
 
 const App = () => {
-  const [open, setOpen] = useState(true);
+  const isMobile = useIsMobile();
+  const [open, setOpen] = useState(true)
+
   const [subMenus, setSubMenus] = useState({
     general: false,
     course: false,
@@ -23,6 +26,12 @@ const App = () => {
     profile: false,
   });
 
+  useEffect(() => {
+    if (isMobile !== undefined) {
+      setOpen(!isMobile);
+    }
+  }, [isMobile]);
+
   // Toggle submenus on click
   const toggleSubMenu = (menu: MenuKeys) => {
     setSubMenus((prev) => ({
@@ -30,27 +39,6 @@ const App = () => {
       [menu]: !prev[menu],
     }));
   };
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setOpen(false);
-      }
-
-      else {
-        setOpen(true);
-      }
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-
-  }, [])
-
 
   // Menu items with potential submenus
   const Menus = [

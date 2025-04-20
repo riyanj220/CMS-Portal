@@ -65,7 +65,7 @@ const App = () => {
   ];
 
   return (
-    <div className={`sticky top-0 max-h-screen overflow-y-auto ${open ? "w-60 flex flex-col  sm:w-72" : "w-16 sm:w-24 overflow-y-hidden"}`}>
+    <div className={`sticky top-0 h-screen overflow-y-auto ${open ? "w-60 flex flex-col  sm:w-72" : "w-16 sm:w-24 overflow-y-hidden"}`}>
       {/* Sidebar section */}
       <div
         className={` ${open ? "w-60 sm:w-72 p-5" : "w-16 p-1 sm:w-24 sm:p-5"

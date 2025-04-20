@@ -1,6 +1,42 @@
 import { Button } from "@mui/material";
+import { useState } from "react";
 
 const Profile = () => {
+  // State to handle the form data
+  const [guardianInfo, setGuardianInfo] = useState({
+    guardianName: "Muhammad Jamil",
+    cellNumber: "123456789011",
+    cnic: "12345678911",
+    occupation: "construction",
+    email: "abc@gmail.com",
+  });
+
+  const [addressInfo, setAddressInfo] = useState({
+    permanentAddress: "ABC street New York",
+    presentAddress: "ABC street New York",
+    personalEmail: "riyanjamil220@gmail.com",
+    officialEmail: "2023F-BSE-075@ssuet.edu.pk",
+    cellNumber: "123456789011",
+    cnic: "42101-7905363-3",
+  });
+
+  // Handle the onChange for form fields
+  const handleGuardianChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setGuardianInfo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setAddressInfo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <div className="max-w-8xl mx-auto p-5 bg-white rounded-lg shadow-md overflow-x-auto sm:p-7">
       {/* Profile Title */}
@@ -63,10 +99,11 @@ const Profile = () => {
               <label className="text-sm text-gray-700 md:text-lg">Guardian Name: *</label>
               <input
                 type="text"
+                name="guardianName"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Name"
-                value={"Muhammad Jamil"}
-                disabled
+                value={guardianInfo.guardianName}
+                onChange={handleGuardianChange}
               />
             </div>
 
@@ -74,9 +111,11 @@ const Profile = () => {
               <label className="text-sm text-gray-700 md:text-lg">Cell #: *</label>
               <input
                 type="text"
+                name="cellNumber"
                 className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter Cell Number"v
-                value={123456789011}
+                placeholder="Please enter Cell Number"
+                value={guardianInfo.cellNumber}
+                onChange={handleGuardianChange}
               />
             </div>
 
@@ -84,10 +123,11 @@ const Profile = () => {
               <label className="text-sm text-gray-700 md:text-lg">CNIC/NICOP/NTN #: *</label>
               <input
                 type="text"
+                name="cnic"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter CNIC/NICOP/NTN #"
-                value={12345678911}
-                disabled
+                value={guardianInfo.cnic}
+                onChange={handleGuardianChange}
               />
             </div>
 
@@ -95,9 +135,11 @@ const Profile = () => {
               <label className="text-sm text-gray-700 md:text-lg">Occupation: *</label>
               <input
                 type="text"
+                name="occupation"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Occupation"
-                value={"construction"}
+                value={guardianInfo.occupation}
+                onChange={handleGuardianChange}
               />
             </div>
 
@@ -105,9 +147,11 @@ const Profile = () => {
               <label className="text-sm text-gray-700 md:text-lg">Email: *</label>
               <input
                 type="email"
+                name="email"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Guardian Email"
-                value={"abc@gmail.com"}
+                value={guardianInfo.email}
+                onChange={handleGuardianChange}
               />
             </div>
 
@@ -122,14 +166,15 @@ const Profile = () => {
           <div className="text-lg font-semibold text-gray-800 mb-4 text-center md:text-xl">Residential Address</div>
           <hr className="border-t-2 border-gray-300 mb-6" />
 
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap gap-3 md:gap-6">
             <div className="flex flex-col w-full sm:w-1/2">
               <label className="text-sm text-gray-700 md:text-lg">Permanent Address: *</label>
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter your Permanent Address"
-                value={"ABC street newyork"}
+                value={addressInfo.permanentAddress}
+                onChange={handleAddressChange}
               />
             </div>
 
@@ -139,7 +184,8 @@ const Profile = () => {
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter your Present Address"
-                value={"ABC street newyork"}
+                value={addressInfo.presentAddress}
+                onChange={handleAddressChange}
               />
             </div>
           </div>
@@ -147,14 +193,15 @@ const Profile = () => {
           <div className="text-lg font-semibold text-gray-800 mb-4 mt-8 text-center md:text-xl">Personal Information</div>
           <hr className="border-t-2 border-gray-300 mb-6" />
 
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap gap-3 md:gap-6">
             <div className="flex flex-col w-full sm:w-1/2">
               <label className="text-sm text-gray-700 md:text-lg">Cell #: *</label>
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Cell Number"
-                value={12345678911}
+                value={addressInfo.cellNumber}
+                onChange={handleAddressChange}
               />
             </div>
 
@@ -164,8 +211,8 @@ const Profile = () => {
                 type="email"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Personal Email"
-                value={"riyanjamil220@gmail.com"}
-                disabled
+                value={addressInfo.personalEmail}
+                onChange={handleAddressChange}
               />
             </div>
 
@@ -173,7 +220,7 @@ const Profile = () => {
               <label className="text-sm text-gray-700 md:text-lg">Official Email: *</label>
               <input
                 type="email"
-                value={"2023F-BSE-075@ssuet.edu.pk"}
+                value={addressInfo.officialEmail}
                 disabled
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Official Email"
@@ -186,11 +233,12 @@ const Profile = () => {
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter CNIC Number"
-                value={"42101-7905363-3"}
-                disabled
+                value={addressInfo.cnic}
+                onChange={handleAddressChange}
               />
             </div>
-            <div className="w-full flex justify-center">
+
+            <div className="w-full flex justify-center mt-6">
               <Button size="large" variant="contained">Save</Button>
             </div>
           </div>

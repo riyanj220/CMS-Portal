@@ -65,18 +65,16 @@ const App = () => {
   ];
 
   return (
-    <div className={`sticky top-0 max-h-screen overflow-y-auto ${open? "w-60 flex flex-col  sm:w-72" : "w-16 sm:w-24 overflow-y-hidden"}`}>
+    <div className={`sticky top-0 max-h-screen overflow-y-auto ${open ? "w-60 flex flex-col  sm:w-72" : "w-16 sm:w-24 overflow-y-hidden"}`}>
       {/* Sidebar section */}
       <div
-        className={` ${
-          open ? "w-60 sm:w-72 p-5" : "w-16 p-1 sm:w-24 sm:p-5"
-        } bg-[#1E293B] h-screen pt-8 relative duration-300 ease-in-out overflow-x-hidden`}
+        className={` ${open ? "w-60 sm:w-72 p-5" : "w-16 p-1 sm:w-24 sm:p-5"
+          } bg-[#1E293B] h-screen pt-8 relative duration-300 ease-in-out overflow-x-hidden`}
       >
         {/* Toggle button sections */}
         <div
-          className={`absolute cursor-pointer -right-3 top-9 w-8 h-8 p-0.5 bg-gray-50 border-gray-50 border-2 rounded-full text-xl flex items-center justify-center ${
-            !open && "rotate-180"
-          } transition-all ease-in-out duration-300 `}
+          className={`absolute cursor-pointer -right-3 top-9 w-8 h-8 p-0.5 bg-gray-50 border-gray-50 border-2 rounded-full text-xl flex items-center justify-center ${!open && "rotate-180"
+            } transition-all ease-in-out duration-300 `}
           onClick={() => setOpen(!open)}
         >
           {open ? <ChevronLeftIcon /> : <ChevronLeftIcon />}
@@ -91,7 +89,12 @@ const App = () => {
             >
               {/* Main Menu item - linkable if no submenu */}
               {!Menu.subMenu ? (
-                <Link to={`/dashboard/${Menu.path}`} className="flex items-center gap-2">
+                <Link to={`/dashboard/${Menu.path}`} className="flex items-center gap-2" onClick={() => {
+                  // Close sidebar if it's mobile
+                  if (isMobile) {
+                    setOpen(false);
+                  }
+                }}>
                   <span className="text-lg">{Menu.icon}</span>
                   <span className={`${!open && "hidden"} origin-left ease-in-out duration-300`}>
                     {Menu.title}
@@ -124,6 +127,12 @@ const App = () => {
                           <Link
                             to={`/dashboard/${Menu.path}/${subMenu.toLowerCase().replace(/ /g, "-")}`}
                             className="flex items-center gap-x-2 w-full"
+                            onClick={() => {
+                              // Close sidebar if it's mobile
+                              if (isMobile) {
+                                setOpen(false);
+                              }
+                            }}
                           >
                             <span className="text-gray-300">
                               <ChevronRightIcon className="text-xs" />

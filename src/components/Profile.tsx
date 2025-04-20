@@ -2,9 +2,9 @@ import { Button } from "@mui/material";
 
 const Profile = () => {
   return (
-    <div className="max-w-8xl mx-auto p-7 bg-white rounded-lg shadow-md">
+    <div className="max-w-8xl mx-auto p-5 bg-white rounded-lg shadow-md overflow-x-auto sm:p-7">
       {/* Profile Title */}
-      <div className="flex justify-center text-xl font-semibold text-gray-800 mb-4 sm:text-3xl">
+      <div className="flex justify-center text-center text-lg font-semibold text-gray-800 mb-4 sm:text-2xl md:text-3xl">
         Student Profile | BS-Software Engineering-Morning
       </div>
 
@@ -12,46 +12,46 @@ const Profile = () => {
       <hr className="border-t-2 border-gray-300 mb-6" />
 
       {/* Profile Data */}
-      <div className="flex flex-wrap justify-center gap-6">
+      <div className="flex flex-wrap justify-center gap-3 md:gap-6">
         {/* Row 1 */}
-        <div className="flex justify-between w-full sm:w-1/2 text-lg text-gray-700">
+        <div className="flex justify-between w-full sm:w-1/2 text-sm text-gray-700 md:text-lg">
           <div>Full Name:</div>
           <div className="font-semibold">RYAN JAMIL</div>
         </div>
 
-        <div className="flex justify-between w-full sm:w-1/2 text-lg text-gray-700">
+        <div className="flex justify-between w-full sm:w-1/2 text-sm text-gray-700 md:text-lg">
           <div>Registration No:</div>
           <div className="font-semibold">2023F-BSE-075</div>
         </div>
 
         {/* Row 2 */}
-        <div className="flex justify-between w-full sm:w-1/2 text-lg text-gray-700">
+        <div className="flex justify-between w-full sm:w-1/2 text-sm text-gray-700 md:text-lg">
           <div>Date Of Birth:</div>
           <div className="font-semibold">25-Oct-2004</div>
         </div>
 
-        <div className="flex justify-between w-full sm:w-1/2 text-lg text-gray-700">
+        <div className="flex justify-between w-full sm:w-1/2 text-sm text-gray-700 md:text-lg">
           <div>Gender:</div>
           <div className="font-semibold">Male</div>
         </div>
 
         {/* Row 3 */}
-        <div className="flex justify-between w-full sm:w-1/2 text-lg text-gray-700">
+        <div className="flex justify-between w-full sm:w-1/2 text-sm text-gray-700 md:text-lg">
           <div>NIC #:</div>
-          <div className="font-semibold">42101-7903983-9</div>
+          <div className="font-semibold">42101-7905363-3</div>
         </div>
       </div>
 
       {/* Flex container for the Guardian Information card and another card */}
-      <div className="flex flex-wrap gap-6 mt-8">
+      <div className="flex flex-wrap gap-3 mt-10 md:flex-nowrap md:gap-6">
         {/* Guardian Information Card */}
-        <div className="w-full sm:w-1/2 p-6 bg-white rounded-lg shadow-md mb-6">
-          <div className="text-xl font-semibold text-gray-800 mb-4 text-center">Guardian Information</div>
+        <div className="w-full sm:w-1/2 bg-white rounded-lg mb-6 md:p-6">
+          <div className="text-lg font-semibold text-gray-800 mb-4 text-center md:text-xl">Guardian Information</div>
           <hr className="border-t-2 border-gray-300 mb-6" />
 
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap gap-3 justify-center md:gap-6">
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">Relation: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">Relation: *</label>
               <select className="border border-gray-300 p-2 rounded-md mt-2">
                 <option>Father</option>
                 <option>Mother</option>
@@ -60,120 +60,137 @@ const Profile = () => {
             </div>
 
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">Guardian Name: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">Guardian Name: *</label>
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Name"
+                value={"Muhammad Jamil"}
+                disabled
               />
             </div>
 
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">Cell #: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">Cell #: *</label>
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter Cell Number"
+                placeholder="Please enter Cell Number"v
+                value={123456789011}
               />
             </div>
 
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">CNIC/NICOP/NTN #: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">CNIC/NICOP/NTN #: *</label>
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter CNIC/NICOP/NTN #"
+                value={12345678911}
+                disabled
               />
             </div>
 
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">Occupation: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">Occupation: *</label>
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Occupation"
+                value={"construction"}
               />
             </div>
 
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">Email: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">Email: *</label>
               <input
                 type="email"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Guardian Email"
+                value={"abc@gmail.com"}
               />
             </div>
-            <div>
+
+            <div className="w-full flex justify-center mt-6">
               <Button size="large" variant="contained">Save</Button>
             </div>
           </div>
         </div>
 
         {/* Second Card: Residential Address & Personal Information */}
-        <div className="w-full sm:w-1/2 p-6 bg-white rounded-lg shadow-md mb-6">
-          <div className="text-xl font-semibold text-gray-800 mb-4 text-center">Residential Address</div>
+        <div className="w-full sm:w-1/2 bg-white rounded-lg mb-6 md:p-6">
+          <div className="text-lg font-semibold text-gray-800 mb-4 text-center md:text-xl">Residential Address</div>
           <hr className="border-t-2 border-gray-300 mb-6" />
 
           <div className="flex flex-wrap gap-6">
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">Permanent Address: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">Permanent Address: *</label>
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter your Permanent Address"
+                value={"ABC street newyork"}
               />
             </div>
 
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">Present Address: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">Present Address: *</label>
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter your Present Address"
+                value={"ABC street newyork"}
               />
             </div>
           </div>
 
-          <div className="text-xl font-semibold text-gray-800 mb-4 mt-8 text-center">Personal Information</div>
+          <div className="text-lg font-semibold text-gray-800 mb-4 mt-8 text-center md:text-xl">Personal Information</div>
           <hr className="border-t-2 border-gray-300 mb-6" />
 
           <div className="flex flex-wrap gap-6">
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">Cell #: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">Cell #: *</label>
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Cell Number"
+                value={12345678911}
               />
             </div>
 
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">Personal Email: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">Personal Email: *</label>
               <input
                 type="email"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Personal Email"
+                value={"riyanjamil220@gmail.com"}
+                disabled
               />
             </div>
 
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">Official Email: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">Official Email: *</label>
               <input
                 type="email"
+                value={"2023F-BSE-075@ssuet.edu.pk"}
+                disabled
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter Official Email"
               />
             </div>
 
             <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-lg text-gray-700">CNIC #: *</label>
+              <label className="text-sm text-gray-700 md:text-lg">CNIC #: *</label>
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-md mt-2"
                 placeholder="Please enter CNIC Number"
+                value={"42101-7905363-3"}
+                disabled
               />
             </div>
-            <div>
+            <div className="w-full flex justify-center">
               <Button size="large" variant="contained">Save</Button>
             </div>
           </div>

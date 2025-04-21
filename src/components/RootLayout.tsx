@@ -13,7 +13,7 @@ export const RootLayout = () => {
                 <AppSidebar />
 
                 {/* Main content - adjust based on sidebar state */}
-                <div className="flex-1 p-5 overflow-y-auto min-h-screen">
+                <div className="flex-1 p-2 overflow-y-auto min-h-screen sm:p-5">
                     <Outlet />
                 </div>
             </div>

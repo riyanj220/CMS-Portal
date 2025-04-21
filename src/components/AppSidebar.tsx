@@ -8,7 +8,7 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import SchoolIcon from '@mui/icons-material/School';
 import QuizIcon from '@mui/icons-material/Quiz';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type MenuKeys = "general" | "course" | "registration" | "fee" | "exam" | 'profile';
@@ -16,6 +16,8 @@ type MenuKeys = "general" | "course" | "registration" | "fee" | "exam" | 'profil
 const App = () => {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(true)
+
+  const location = useLocation()
 
   const [subMenus, setSubMenus] = useState({
     general: false,
@@ -63,7 +65,9 @@ const App = () => {
     },
     { title: "Profile", icon: <AccountBoxIcon />, key: "profile", path: "profile" },
   ];
-
+  console.log({
+    location: location.pathname
+  });
   return (
     <div className={`sticky top-0 h-screen overflow-y-auto ${open ? "w-60 flex flex-col  sm:w-72" : "w-16 sm:w-24 overflow-y-hidden"}`}>
       {/* Sidebar section */}
@@ -85,7 +89,8 @@ const App = () => {
           {Menus.map((Menu, index) => (
             <li
               key={index}
-              className={`flex flex-col rounded-md py-3 px-4 cursor-pointer hover:text-white text-gray-200 hover:bg-indigo-800/50 transition-all ease-in-out duration-300 ${Menu.gap ? "mt-9" : "mt-2"} ${index === 0 && "bg-indigo-700/40"}`}
+              className={`flex flex-col rounded-md py-3 px-4 cursor-pointer hover:text-white text-gray-200 hover:bg-indigo-800/50 transition-all ease-in-out duration-300 ${Menu.gap ? "mt-9" : "mt-2"} ${(index === 0 && location.pathname === "/dashboard/") || (location.pathname.startsWith(`/dashboard/${Menu.path}`) && index !== 0) ? "bg-indigo-700/40" : ""
+                }`}
             >
               {/* Main Menu item - linkable if no submenu */}
               {!Menu.subMenu ? (

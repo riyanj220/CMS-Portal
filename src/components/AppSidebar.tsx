@@ -53,7 +53,7 @@ const App = () => {
       key: "general",
       path: "general",
     },
-    { title: "Course", icon: <SchoolIcon />, key: "course", path: "course" },
+    { title: "Courses", icon: <SchoolIcon />, key: "course", path: "course" },
     { title: "Registration", icon: <LibraryBooksIcon />, key: "registration", path: "registration" },
     { title: "Fee", icon: <CreditCardIcon />, key: "fee", path: "fee" },
     {

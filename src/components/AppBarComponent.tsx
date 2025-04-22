@@ -17,6 +17,7 @@ const AppBarComponent = () => {
         <div className="flex items-center space-x-4">
           <div className="w-10 h-10">
             <img src="./images/login-logo.png" alt="University Logo" className='min-w-10 min-h-10' />
+            {/* <img src="http://localhost:5173/CMS-Portal/images/login-logo.png" alt="University Logo" className='min-w-10 min-h-10' /> */}
           </div>
           <div className="text-white text-lg">
             <span className="hidden sm:block">Sir Syed University of Engineering & Technology</span>
@@ -31,7 +32,7 @@ const AppBarComponent = () => {
             className="w-10 h-10 rounded-full cursor-pointer bg-gray-600 flex items-center justify-center"
           >
             <img
-              src="/static/images/avatar/2.jpg" // Replace with actual user avatar or image
+              src="./images/avatar.png" // Replace with actual user avatar or image
               alt="Profile"
               className="w-full h-full rounded-full"
             />

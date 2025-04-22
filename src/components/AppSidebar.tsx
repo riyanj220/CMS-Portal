@@ -65,9 +65,7 @@ const App = () => {
     },
     { title: "Profile", icon: <AccountBoxIcon />, key: "profile", path: "profile" },
   ];
-  console.log({
-    location: location.pathname
-  });
+  
   return (
     <div className={`sticky top-0 h-screen overflow-y-auto ${open ? "w-60 flex flex-col  sm:w-72" : "w-16 sm:w-24 overflow-y-hidden"}`}>
       {/* Sidebar section */}
@@ -85,11 +83,11 @@ const App = () => {
         </div>
 
         {/* Sidebar Navbar Items section */}
-        <ul className="pt-6 space-y-0.5 overflow-y-auto max-h-screen">
+        <ul className="pt-6 space-y-0.5 max-h-screen">
           {Menus.map((Menu, index) => (
             <li
               key={index}
-              className={`flex flex-col rounded-md py-3 px-4 cursor-pointer hover:text-white text-gray-200 hover:bg-indigo-800/50 transition-all ease-in-out duration-300 ${Menu.gap ? "mt-9" : "mt-2"} ${(index === 0 && location.pathname === "/dashboard/") || (location.pathname.startsWith(`/dashboard/${Menu.path}`) && index !== 0) ? "bg-indigo-700/40" : ""
+              className={`flex flex-col rounded-md py-3 px-4 cursor-pointer hover:text-white text-gray-200 hover:bg-indigo-800/50 transition-all ease-in-out duration-300 ${Menu.gap ? "mt-9" : "mt-2"} ${(index === 0 && location.pathname === "/dashboard/" || index===0 && location.pathname==="/dashboard") || (location.pathname.startsWith(`/dashboard/${Menu.path}`) && index !== 0) ? "bg-indigo-700/40" : ""
                 }`}
             >
               {/* Main Menu item - linkable if no submenu */}

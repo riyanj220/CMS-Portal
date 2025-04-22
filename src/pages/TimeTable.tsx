@@ -18,72 +18,141 @@ interface Column {
 }
 
 interface Data {
-  course: string;
+  courseTitle: string;
   courseCode: string;
-  semester: string;
-  session: string;
-  fromDate: string;
-  coursePassed: string;
   sectionCode: string;
-  faculty: string;
-  timings: string;
+  monday: string;
+  tuesday: string;
+  wednesday: string;
+  thursday: string;
+  friday: string;
 }
 
 const columns: Column[] = [
-  { id: 'course', label: 'COURSE', minWidth: 170 },
+  { id: 'courseTitle', label: 'COURSE TITLE', minWidth: 170 },
   { id: 'courseCode', label: 'COURSE CODE', minWidth: 120 },
-  { id: 'semester', label: 'SEMESTER', minWidth: 100 },
-  { id: 'session', label: 'SESSION', minWidth: 100 },
-  { id: 'fromDate', label: 'FROM DATE', minWidth: 120 },
-  { id: 'coursePassed', label: 'COURSE PASSED STATUS', minWidth: 180 },
   { id: 'sectionCode', label: 'SECTION CODE', minWidth: 120 },
-  { id: 'faculty', label: 'FACULTY', minWidth: 170 },
-  { id: 'timings', label: 'TIMINGS', minWidth: 120 },
+  { id: 'monday', label: 'MONDAY', minWidth: 100 },
+  { id: 'tuesday', label: 'TUESDAY', minWidth: 100 },
+  { id: 'wednesday', label: 'WEDNESDAY', minWidth: 100 },
+  { id: 'thursday', label: 'THURSDAY', minWidth: 100 },
+  { id: 'friday', label: 'FRIDAY', minWidth: 100 },
 ];
 
 function createData(
-  course: string,
+  courseTitle: string,
   courseCode: string,
-  semester: string,
-  session: string,
-  fromDate: string,
-  coursePassed: string,
   sectionCode: string,
-  faculty: string,
-  timings: string
+  monday: string,
+  tuesday: string,
+  wednesday: string,
+  thursday: string,
+  friday: string,
 ): Data {
   return {
-    course,
+    courseTitle,
     courseCode,
-    semester,
-    session,
-    fromDate,
-    coursePassed,
     sectionCode,
-    faculty,
-    timings,
+    monday,
+    tuesday,
+    wednesday,
+    thursday,
+    friday,
   };
 }
 
 const rows = [
-  createData('Probability & Satistics', 'MS301T - 2002', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-MS301T-B-17239', 'Muhammad Mobin Anwer Siddiqui', 'CF-4 Wednesday (13:30:00 - 14:30:00), CF-4 Wednesday (14:30:00 - 15:30:00), CG-3 Friday (08:30:00 - 09:30:00)'),
-  createData('Technical Writing', 'HS211 - 2347', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-HS211-B-17238', 'Syeda Beena Bukhari', 'CF-3 Monday (15:30:00 - 16:30:00), CF-4 Thursday (10:30:00 - 11:30:00)'),
-  createData('Software design and architecture', 'SE211T - 4230', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', '	Spring 2025-2023F-BS-SE-SE211T-B-17240', 'Engr. Dur-E-Shawar Agha', 'CF-3 Friday (15:30:00 - 16:30:00), CF-4 Wednesday (15:30:00 - 16:30:00), CG-2 Thursday (14:30:00 - 15:30:00)'),
+  createData(
+    'Technical Report Writing',
+    'HS211',
+    'Spring 2025-2023F-BS-SE-HS211-B-17238',
+    '15:30:00-16:30:00',
+    '',
+    '',
+    '10:30:00-11:30:00',
+    ''
+  ),
+  createData(
+    'Probability & Satistics',
+    'MS301T',
+    'Spring 2025-2023F-BS-SE-MS301T-B-17239',
+    '',
+    '',
+    '13:30:00-14:30:00 || 14:30:00-15:30:00',
+    '',
+    '08:30:00-09:30:00',
+  ),
+
+  createData(
+    'Operating System Lab',
+    'SE204L',
+    'Spring 2025-2023F-BS-SE-SE204L-B-17237',
+    '',
+    '',
+    '',
+    '11:30:00-14:30:00',
+    ''
+  ),
   
-  createData('Software design and architecture lab', 'SE211L - 4231', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-SE211L-B-17224', 'Engr. Muhammad Huzaifa', 'BF-03 Monday (11:30:00 - 14:30:00)'),
+  createData(
+    'Operating System',
+    'SE204T',
+    'Spring 2025-2023F-BS-SE-SE204T-B-17236',
+    '9:30:00-10:30:00 || 16:30:00-17:30:00' ,
+    '',
+    '16:30:00-17:30:00',
+    '',
+    ''
+  ),
   
-  createData('Operating system lab', 'SE204L - 4232', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-SE204L-B-17237', 'Engr. Samrah Shafique', 'BF-02 Thursday (11:30:00 - 14:30:00)'),
+  createData(
+    'Introduction to Database Lab',
+    'SE209L',
+    'Spring 2025-2023F-BS-SE-SE209L-B-17234',
+    '' ,
+    '',
+    '',
+    '',
+    '09:30:00-12:30:00'
+  ),
   
-  createData('Operating system', 'SE204T - 4233', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-SE204T-B-17236', 'Engr. Farheen Qazi', 'CF-3 Friday (14:30:00 - 15:30:00), CF-3 Monday (16:30:00 - 17:30:00), CF-4 Wednesday (16:30:00 - 17:30:00)'),
+  createData(
+    'Introduction to Database Systems',
+    'SE209T',
+    'Spring 2025-2023F-BS-SE-SE209T-B-17231',
+    '14:30:00-15:30:00' ,
+    '',
+    '',
+    '08:30:00-09:30:00 || 09:30:00-10:30:00',
+    ''
+  ),
   
-  createData('Introduction to Database Lab', 'SE209L - 4234', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-SE209L-B-17234', 'Engr. Sumreena Bano',	'CS-4 Friday (09:30:00 - 12:30:00)'),
+  createData(
+    'Software Design and Architecture Lab',
+    'SE211L',
+    'Spring 2025-2023F-BS-SE-SE211L-B-17224',
+    '11:30:00-14:30:00' ,
+    '',
+    '',
+    '',
+    ''
+  ),
   
-  createData('Introduction to Database systems', 'SE209T - 4235', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', '	Spring 2025-2023F-BS-SE-SE209T-B-17231', 'Engr. Kiran Hidayat',	'CF-3 Monday (14:30:00 - 15:30:00), CF-4 Thursday (08:30:00 - 09:30:00), CF-4 Thursday (09:30:00 - 10:30:00)'),
-  
+  createData(
+    'Software Design and Architecture',
+    'SE211T',
+    'Spring 2025-2023F-BS-SE-SE211T-B-17240',
+    '8:30:00-9:30:00' ,
+    '',
+    '8:30:00 - 9:30:00',
+    '14:30:00 - 15:30:00',
+    ''
+  ),
+
+
 ];
 
-
-function Course() {
+function TimeTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -109,7 +178,7 @@ function Course() {
           py: 2,
         }}
       >
-        <div className="text-xl font-bold">Courses</div>
+        <div className="text-xl font-bold">Time Table</div>
       </Box>
 
       <TableContainer
@@ -166,7 +235,6 @@ function Course() {
       />
     </Paper>
   );
-
 }
 
-export default Course;
+export default TimeTable;

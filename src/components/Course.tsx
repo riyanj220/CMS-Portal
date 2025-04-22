@@ -109,7 +109,7 @@ function Course() {
           py: 2,
         }}
       >
-        <div className="text-xl font-bold">Courses</div>
+        <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4  md:text-3xl">Courses</div>
       </Box>
 
       <TableContainer
@@ -128,6 +128,7 @@ function Course() {
                   key={column.id}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
+                  sx={{ backgroundColor: '#E5E7EB' ,fontWeight: 'bold'}}
                 >
                   {column.label}
                 </TableCell>

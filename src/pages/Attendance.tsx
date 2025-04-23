@@ -1,6 +1,7 @@
 import { Box, IconButton, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import PreviewIcon from '@mui/icons-material/Preview';
 import { useState } from "react";
+import CloseIcon from '@mui/icons-material/Close';
 
 interface Data {
   courseTitle: string,
@@ -17,7 +18,8 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: '95%',
+  maxWidth: '1000px',
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -74,19 +76,19 @@ const Attendance = () => {
   ];
 
   interface ModalData {
-    dayTime : string,
+    dayTime: string,
     date: string,
-    status:string
+    status: string
   }
 
   const modalColumns = [
-    {label: "DAY - TIME"},
-    {label: "DATE"},
-    {label: "STATUS"},
+    { label: "DAY - TIME" },
+    { label: "DATE" },
+    { label: "STATUS" },
   ]
 
-  const createModalData = (dayTime:string, date:string, status:string):ModalData => {
-    return{
+  const createModalData = (dayTime: string, date: string, status: string): ModalData => {
+    return {
       dayTime,
       date,
       status
@@ -94,20 +96,20 @@ const Attendance = () => {
   }
 
   const modalRows = [
-    createModalData('Thursday - [10:30:00 - 11:30:00]',	'06-Mar-2025'	,'Present'),
-    createModalData('Monday - [15:30:00 - 16:30:00]',	'10-Mar-2025',	'Present'),
-    createModalData('Thursday - [10:30:00 - 11:30:00]',	'13-Mar-2025',	'Present'),
-    createModalData('Monday - [15:30:00 - 16:30:00]',	'17-Mar-2025',	'Present'),
-    createModalData('Thursday - [10:30:00 - 11:30:00]',	'20-Mar-2025',	'Present'),
-    createModalData('Monday - [15:30:00 - 16:30:00]',	'24-Mar-2025',	'Present'),
-    createModalData('Thursday - [10:30:00 - 11:30:00]',	'27-Mar-2025',	'Present'),
-    createModalData('Monday - [15:30:00 - 16:30:00]',	'31-Mar-2025',	'Present'),
-    createModalData('Thursday - [10:30:00 - 11:30:00]',	'03-Apr-2025',	'Present'),
-    createModalData('Monday - [15:30:00 - 16:30:00]',	'07-Apr-2025',	'Present'),
-    createModalData('Thursday - [10:30:00 - 11:30:00]',	'10-Apr-2025',	'Present'),
-    createModalData('Monday - [15:30:00 - 16:30:00]',	'14-Apr-2025',	'Present'),
-    createModalData('Thursday - [10:30:00 - 11:30:00]',	'17-Apr-2025',	'Present'),
-    createModalData('Monday - [15:30:00 - 16:30:00]',	'21-Apr-2025',	'Present')
+    createModalData('Thursday - [10:30:00 - 11:30:00]', '06-Mar-2025', 'Present'),
+    createModalData('Monday - [15:30:00 - 16:30:00]', '10-Mar-2025', 'Present'),
+    createModalData('Thursday - [10:30:00 - 11:30:00]', '13-Mar-2025', 'Present'),
+    createModalData('Monday - [15:30:00 - 16:30:00]', '17-Mar-2025', 'Present'),
+    createModalData('Thursday - [10:30:00 - 11:30:00]', '20-Mar-2025', 'Present'),
+    createModalData('Monday - [15:30:00 - 16:30:00]', '24-Mar-2025', 'Present'),
+    createModalData('Thursday - [10:30:00 - 11:30:00]', '27-Mar-2025', 'Present'),
+    createModalData('Monday - [15:30:00 - 16:30:00]', '31-Mar-2025', 'Present'),
+    createModalData('Thursday - [10:30:00 - 11:30:00]', '03-Apr-2025', 'Present'),
+    createModalData('Monday - [15:30:00 - 16:30:00]', '07-Apr-2025', 'Present'),
+    createModalData('Thursday - [10:30:00 - 11:30:00]', '10-Apr-2025', 'Present'),
+    createModalData('Monday - [15:30:00 - 16:30:00]', '14-Apr-2025', 'Present'),
+    createModalData('Thursday - [10:30:00 - 11:30:00]', '17-Apr-2025', 'Present'),
+    createModalData('Monday - [15:30:00 - 16:30:00]', '21-Apr-2025', 'Present')
   ]
 
   return (
@@ -166,7 +168,21 @@ const Attendance = () => {
 
                 <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
                   <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2" className="text-center">
+                    <IconButton
+                      sx={{
+                        position: "absolute",
+                        top: 10,
+                        right: 20,
+                        color: 'gray',
+                      }}
+                      onClick={handleClose}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                    <Typography id="modal-modal-title" variant="h6" component="h2" sx={{
+                      textAlign: 'center',
+                      fontSize: { xs: '1.2rem', sm: '2rem'}, // Responsive font size
+                    }}>
                       Details
                     </Typography>
 
@@ -174,7 +190,7 @@ const Attendance = () => {
                       <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                           <TableRow>
-                            {modalColumns.map((column,index) => (
+                            {modalColumns.map((column, index) => (
                               <TableCell key={index} sx={{ backgroundColor: '#E5E7EB', fontWeight: 'bold' }}>
                                 {column.label}
                               </TableCell>
@@ -182,7 +198,7 @@ const Attendance = () => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {modalRows.map((row,index) => (
+                          {modalRows.map((row, index) => (
                             <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                               <TableCell>{row.dayTime}</TableCell>
                               <TableCell>{row.date}</TableCell>

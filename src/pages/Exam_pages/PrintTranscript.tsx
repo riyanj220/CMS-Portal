@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import { Box, Button, FormControl, InputLabel, Select, MenuItem, Paper, SelectChangeEvent, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
-import { jsPDF } from 'jspdf';  // Import jsPDF for generating PDFs
+// import { jsPDF } from 'jspdf';  // Import jsPDF for generating PDFs
+import html2pdf from 'html2pdf.js';
+import html2canvas from 'html2canvas-pro';
+declare global {
+  interface Window {
+    html2canvas: typeof html2canvas;
+  }
+}
+
+window.html2canvas = html2canvas; // Override global instance used by html2pdf
 
 export const PrintTranscript = () => {
   const [page, setPage] = useState("front");
@@ -42,61 +51,63 @@ export const PrintTranscript = () => {
   ];
 
   function createDataForSemesterWiseTable(
-    srNo:number,
-    semester:string,
-    totalCrHours:number,
-    earnedCrHours:number,
-    earnedGp:number,
-    earnedGpa:number,
+    srNo: number,
+    semester: string,
+    totalCrHours: number,
+    earnedCrHours: number,
+    earnedGp: number,
+    earnedGpa: number,
     CGPA: string,
-    numberOfCoursesPassed:number
-  )
-  {
-    return {srNo,semester, totalCrHours, earnedCrHours, earnedGp, earnedGpa, CGPA, numberOfCoursesPassed}
+    numberOfCoursesPassed: number
+  ) {
+    return { srNo, semester, totalCrHours, earnedCrHours, earnedGp, earnedGpa, CGPA, numberOfCoursesPassed }
   }
 
   const rowsForSemesterWiseTable = [
-    createDataForSemesterWiseTable(1,'1st Semester', 15, 15,59.32,3.95,'',7),
-    createDataForSemesterWiseTable(2,'2nd Semester', 17, 17,67.66,3.98,"3.96",8),
-    createDataForSemesterWiseTable(3,'3rd Semester', 17, 17,66.98,3.95,'',7),
+    createDataForSemesterWiseTable(1, '1st Semester', 15, 15, 59.32, 3.95, '', 7),
+    createDataForSemesterWiseTable(2, '2nd Semester', 17, 17, 67.66, 3.98, "3.96", 8),
+    createDataForSemesterWiseTable(3, '3rd Semester', 17, 17, 66.98, 3.95, '', 7),
   ]
 
-  const handleDownloadPDF = () => {
-    const doc = new jsPDF();
 
-    // Front Page Content
-    if (page === "front") {
-      doc.text("Transcript - Front Page", 10, 10);
-      doc.text("Name: Ryan Jamil", 10, 20);
-      doc.text("Father's Name: Muhammad Jamil", 10, 30);
-      doc.text("Enrolment No: 2019BSSE123", 10, 40);
-      doc.text("Program: Software Engineering", 10, 50);
-      doc.text("Batch: 2023", 10, 60);
-      doc.text("CGPA: 3.95", 10, 70);
+const handleDownloadPDF = () => {
+  const original = document.getElementById("transcript-container");
 
-      // Add course data for Front page (example)
-      doc.text("Course 1: Software Engineering - Grade: A", 10, 80);
-      doc.text("Course 2: Data Structures - Grade: A-", 10, 90);
+  if (!original) return;
 
-      // Add more content as needed
-    }
+  const clone = original.cloneNode(true) as HTMLElement;
+  clone.style.width = "800px";
+  clone.style.position = "fixed";
+  clone.style.top = "-10000px";
+  document.body.appendChild(clone);
 
-    // Back Page Content
-    if (page === "back") {
-      doc.text("Transcript - Back Page", 10, 10);
-      doc.text("Start Date: 01-09-2023", 10, 20);
-      doc.text("End Date: 30-06-2024", 10, 30);
-      doc.text("GPA: 3.8", 10, 40);
-      doc.text("CGPA: 3.95", 10, 50);
-
-      // Add more content for back page
-    }
-
-    doc.save("transcript.pdf");
+  const opt = {
+    margin: 0,
+    filename: 'transcript.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+    },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
+  html2pdf().set(opt).from(clone).save()
+    .then(() => {
+      document.body.removeChild(clone);
+    })
+    .catch((err: any) => {
+      console.error("PDF generation error:", err);
+      document.body.removeChild(clone);
+    });
+};
+
+
+
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', overflow: "auto" }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', overflow: "auto" }} id="transcript-container">
       {/* Header with Dropdown for Front/Back selection */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
         <FormControl sx={{ width: '30%' }}>
@@ -127,7 +138,7 @@ export const PrintTranscript = () => {
         <Box
           sx={{
             position: "sticky",
-            top: '-15px',
+            top: '-17px',
             zIndex: 1,
             backgroundColor: "white",
             textAlign: "center",
@@ -279,7 +290,7 @@ export const PrintTranscript = () => {
             </Box>
 
             <TableContainer component={Paper} sx={{ marginBottom: 2 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' ,mb:2}}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mb: 2 }}>
                 <Table sx={{ maxWidth: 650 }} aria-label="simple table">
                   <TableHead sx={{ backgroundColor: 'rgb(209 213 219)' }}>
                     <TableRow>
@@ -301,46 +312,89 @@ export const PrintTranscript = () => {
               </Box>
             </TableContainer>
 
-            <TableContainer component={Paper} sx={{ marginBottom: 2}}>
-                <Table sx={{ minWidth: 450 }} size="small" aria-label="a dense table">
-                  <TableHead>
-                    <TableRow sx={{
-                      backgroundColor: 'rgb(209 213 219)', // Tailwind gray-200 hex color
-                      fontWeight: "bold",
-                    }}>
-                      <TableCell align="center" colSpan={8}>Updated Semester wise Status</TableCell>
+            <TableContainer component={Paper} sx={{ marginBottom: 2, overflow: 'unset' }}>
+              <Table sx={{ minWidth: 1100 }} size="small" aria-label="a dense table">
+                <TableHead>
+                  <TableRow sx={{
+                    backgroundColor: 'rgb(209 213 219)', // Tailwind gray-200 hex color
+                    fontWeight: "bold",
+                  }}>
+                    <TableCell align="center" colSpan={8}>Updated Semester wise Status</TableCell>
+                  </TableRow>
+                  <TableRow sx={{
+                    backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
+                  }}>
+                    <TableCell sx={{ flex: 0.5 }}>S.No</TableCell>
+                    <TableCell sx={{ flex: 2 }}>Semester</TableCell>
+                    <TableCell align="center" sx={{ flex: 1 }}>Total Cr. Hr.</TableCell>
+                    <TableCell align="center" sx={{ flex: 1 }}>Earned Cr.Hr.</TableCell>
+                    <TableCell align="center" sx={{ flex: 1 }}>Earned G.P</TableCell>
+                    <TableCell align='center' sx={{ flex: 0.5 }}>Earned GPA</TableCell>
+                    <TableCell align='center' sx={{ flex: 0.5 }}>CGPA</TableCell>
+                    <TableCell align='center' sx={{ flex: 0.5 }}>No of Courses Passed</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rowsForSemesterWiseTable.map((row) => (
+                    <TableRow key={row.srNo}>
+                      <TableCell>{row.srNo}</TableCell>
+                      <TableCell>{row.semester}</TableCell>
+                      <TableCell align="center">{row.totalCrHours}</TableCell>
+                      <TableCell align="center">{row.earnedCrHours}</TableCell>
+                      <TableCell align="center">{row.earnedGp}</TableCell>
+                      <TableCell align="center">{row.earnedGpa}</TableCell>
+                      <TableCell align="center">{row.CGPA}</TableCell>
+                      <TableCell align="center">{row.numberOfCoursesPassed}</TableCell>
                     </TableRow>
-                    <TableRow sx={{
-                      backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
-                    }}>
-                      <TableCell sx={{ flex: 0.5 }}>S.No</TableCell>
-                      <TableCell sx={{ flex: 2 }}>Semester</TableCell>
-                      <TableCell align="center" sx={{ flex: 1 }}>Total Cr. Hr.</TableCell>
-                      <TableCell align="center" sx={{ flex: 1 }}>Earned Cr.Hr.</TableCell>
-                      <TableCell align="center" sx={{ flex: 1 }}>Earned G.P</TableCell>
-                      <TableCell align='center' sx={{ flex: 0.5 }}>Earned GPA</TableCell>
-                      <TableCell align='center' sx={{ flex: 0.5 }}>CGPA</TableCell>
-                      <TableCell align='center' sx={{ flex: 0.5 }}>No of Courses Passed</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rowsForSemesterWiseTable.map((row) => (
-                      <TableRow key={row.srNo}>
-                        <TableCell>{row.srNo}</TableCell>
-                        <TableCell>{row.semester}</TableCell>
-                        <TableCell align="center">{row.totalCrHours}</TableCell>
-                        <TableCell align="center">{row.earnedCrHours}</TableCell>
-                        <TableCell align="center">{row.earnedGp}</TableCell>
-                        <TableCell align="center">{row.earnedGpa}</TableCell>
-                        <TableCell align="center">{row.CGPA}</TableCell>
-                        <TableCell align="center">{row.numberOfCoursesPassed}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
-              </TableContainer>
+            <Box
+              sx={{
+                mt: 5,
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'nowrap',
+                justifyContent: 'space-between',
+                gap: '3rem',
+                whiteSpace: 'nowrap', // prevents wrapping
+                mb: 4
+              }}
+            >
+              <div>
+                Prepared By: _____________________________
+              </div>
+              <div>
+                Checked By: ______________________________
+              </div>
+              <div>
+                Controller of Examinations: ___________________________
+              </div>
+            </Box>
+
+            <Box sx={{ overflow: 'auto', display: 'flex', flexDirection: 'column', minWidth: '1100px', mb: '40', gap: '0.5rem' }}>
+              <div className='text-xl'>
+                DISCLAIMER/PROCLAMATION
+              </div>
+              <div>
+                Error and omissions are expected. Any entry appearing therein does not in itself confer any right or privilege to a student for the grant of any semester mark sheet/transcript or Degree, which will be issued under the rules and regulations on the basis of original record of the SSUET.
+              </div>
+              <div>
+                1. The University reserves the right to correct, modify or change the results at any time on the basis of original record or in any manner if found to have been wrongly computed or compiled. Typographical error, if any, will not entitle anybody to interpret the result in his/her favor and to claim any advantage therefrom. The University reserves the right to correct such mistakes as and when they come to notice and no action shall lie against the University.
+              </div>
+              <div>
+                2. Every care has been taken to ensure that the results are accurate. The University, however, does not hold itself responsible for any omission or mistake of results notification.
+              </div>
+              <div>
+                3.Declaration by the Student: I understand that I am being allowed to appear in the above examinations on the condition that I have completed the attendance requirement. If my attendance is short or I have not fulfilled any other condition of appearing in examinations, my result may be canceled.
+              </div>
+              <div>
+                4. Note: Ineligible candidates shall not claim any right for the announcement of their results if an admit card is issued to them inadvertently on the basis of incorrect/false information.
+              </div>
+            </Box>
+
 
           </>
         )}

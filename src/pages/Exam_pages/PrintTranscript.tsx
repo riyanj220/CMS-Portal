@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { Box, Button, FormControl, InputLabel, Select, MenuItem, Paper, SelectChangeEvent, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
-// import { jsPDF } from 'jspdf';  // Import jsPDF for generating PDFs
-import html2pdf from 'html2pdf.js';
 import html2canvas from 'html2canvas-pro';
+import { jsPDF } from 'jspdf';  
+
 declare global {
   interface Window {
     html2canvas: typeof html2canvas;
   }
 }
-
-window.html2canvas = html2canvas; // Override global instance used by html2pdf
+window.html2canvas = html2canvas;
 
 export const PrintTranscript = () => {
   const [page, setPage] = useState("front");
@@ -69,45 +68,67 @@ export const PrintTranscript = () => {
     createDataForSemesterWiseTable(3, '3rd Semester', 17, 17, 66.98, 3.95, '', 7),
   ]
 
+  function createDataForTranscriptBackSideGradeInterpretation(
+    grade: string,
+    interpretation: string,
+  ) {
+    return { grade, interpretation };
+  }
 
-const handleDownloadPDF = () => {
-  const original = document.getElementById("transcript-container");
+  const rowsForTranscriptBackSideGradeInterpretation = [
+    createDataForTranscriptBackSideGradeInterpretation('F/R', 'Failed course replaced with another one.'),
+    createDataForTranscriptBackSideGradeInterpretation('NC', 'Non-credit course and not included in the calculation of CGPA.'),
+    createDataForTranscriptBackSideGradeInterpretation('S', 'Satisfactory, S is counted towards credits but not used in the calculation of CGPA.'),
+    createDataForTranscriptBackSideGradeInterpretation('I', 'Incomplete, to be replaced by the grade earned later on.'),
+    createDataForTranscriptBackSideGradeInterpretation('W', 'Withdrawn'),
+    createDataForTranscriptBackSideGradeInterpretation('U', 'Unsatisfactory, U is neither counted towards credits not used in the calculation of CGPA.'),
 
-  if (!original) return;
+  ]
 
-  const clone = original.cloneNode(true) as HTMLElement;
-  clone.style.width = "800px";
-  clone.style.position = "fixed";
-  clone.style.top = "-10000px";
-  document.body.appendChild(clone);
-
-  const opt = {
-    margin: 0,
-    filename: 'transcript.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: "#ffffff",
-    },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  const createDataForTranscriptBackSideShortForms = (shortform: string, interpretation: string) => {
+    return { shortform, interpretation }
   };
 
-  html2pdf().set(opt).from(clone).save()
-    .then(() => {
-      document.body.removeChild(clone);
-    })
-    .catch((err: any) => {
-      console.error("PDF generation error:", err);
-      document.body.removeChild(clone);
-    });
+  const rowsForTranscriptBackSideShortForms = [
+    createDataForTranscriptBackSideShortForms('SGPA', 'Semester Grade Point Average.'),
+    createDataForTranscriptBackSideShortForms('CGPA', '	Cumulative Grade Point Average.'),
+    createDataForTranscriptBackSideShortForms('R-n', 'Repeat count -n, n is the number of times a course is repeated.Points from the most recent attempt are used in the calculation of CGPA.'),
+    createDataForTranscriptBackSideShortForms('Rp-n', '	Replacement n, Rp-n appears in Remarks in front of two courses (course1 taken prior to course 2) representing that course 1 is replace by course 2.')
+  ];
+
+
+const handleDownloadPDF = async () => {
+  const sectionId = page === 'front' ? 'transcript-front' : 'transcript-back';
+  const element = document.getElementById(sectionId);
+
+  if (!element) {
+    console.warn("Transcript section not found.");
+    return;
+  }
+
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: "#ffffff"
+  });
+
+  const imgData = canvas.toDataURL('image/jpeg', 1.0);
+  const pdf = new jsPDF('p', 'mm', 'a4');
+
+  const imgProps = pdf.getImageProperties(imgData);
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+  pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+  pdf.save(`${sectionId}.pdf`);
 };
 
+  console.log("html2canvas version in use:", window.html2canvas);
 
 
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', overflow: "auto" }} id="transcript-container">
+    <Box sx={{ display: 'flex', flexDirection: 'column', overflow: "auto" }} id="transcript-front">
       {/* Header with Dropdown for Front/Back selection */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
         <FormControl sx={{ width: '30%' }}>
@@ -146,7 +167,12 @@ const handleDownloadPDF = () => {
             minWidth: '1100px', // Ensure full width
           }}
         >
-          <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Transcript</div>
+
+          {page === 'front' ? (
+            <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Transcript</div>
+          ) : (<div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Interpretation of Transcript Contents</div>)}
+
+
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap', width: '100%', minWidth: '1100px', overflow: 'auto' }}>
@@ -154,7 +180,7 @@ const handleDownloadPDF = () => {
           {page === "front" ? (
             <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
               {/* First Column for First Half of Data */}
-              <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <Box id ="test" sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <div><strong>Name:</strong> Riyan Jamil</div>
                 <div><strong>Roll No:</strong> 2023F-BSE-075</div>
                 <div><strong>Degree Status:</strong> In-Progress</div>
@@ -179,7 +205,93 @@ const handleDownloadPDF = () => {
               </Box>
             </Box>
           ) : (
-            <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', flexDirection: 'column' }} />
+            <Box id="transcript-back" sx={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: 4, minWidth: '1100px', width: '100%' }}>
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <TableHead>
+                    <TableRow sx={{
+                      backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
+                    }}>
+                      <TableCell align="left">Grade</TableCell>
+                      <TableCell align="left">Interpretation</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rowsForTranscriptBackSideGradeInterpretation.map((row, index) => (
+                      <TableRow
+                        key={index}
+                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                      >
+                        <TableCell component="th" scope="row">
+                          {row.grade}
+                        </TableCell>
+                        <TableCell align="left">{row.interpretation}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <TableHead>
+                    <TableRow sx={{
+                      backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
+                    }}>
+                      <TableCell>Shortform </TableCell>
+                      <TableCell align="left">Interpretation</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rowsForTranscriptBackSideShortForms.map((row, index) => (
+                      <TableRow
+                        key={index}
+                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                      >
+                        <TableCell component="th" scope="row">
+                          {row.shortform}
+                        </TableCell>
+                        <TableCell align="left">{row.interpretation}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              <Box display={'flex'} justifyContent={'center'} flexDirection={'column'} alignItems={'center'} >
+                <div className="flex flex-col items-center gap-3 mt-4 mb-2 min-w-2xl">
+                  <div className="text-lg font-bold underline">Grading System</div>
+                  <div className="border border-black w-full">
+                    <div className="flex">
+                      <div className="flex-1 border-r border-black items-center justify-center text-center p-3.5 font-semibold">Numerical Grade</div>
+                      <div className="flex-1 border-r border-black text-center p-3.5 font-semibold">Grade Point</div>
+                      <div className="flex-1 border-r border-black text-center p-3.5 font-semibold">Letter Grade</div>
+                      <div className="flex-1 text-center p-3.5 font-semibold">Value Remarks</div>
+                    </div>
+                  </div>
+
+                  <div className="text-lg font-bold underline mt-5">Degree Requirements:</div>
+                  <div className='text-lg font-semibold'>
+                    Cumulative Grade Point Average (CGPA) minimum 2.0 calculated for all semesters.
+                  </div>
+                  <div className='text-lg font-semibold'>
+                    CGPA = (Total Grade Points / Total Credit Hours)
+                  </div>
+                </div>
+              </Box>
+
+              <Box>
+                <div className='flex flex-col gap-2 mb-4 text-lg font-semibold'>
+                  <div>Charter Date:	25-Oct-95</div>
+                  <div>Date of Admission:</div>
+                  <div>Date of Completion:</div>
+                  <div>Admssion Required: HSC/DAE or Equivalent Examination</div>
+                  <div>Previous Degree:	Nil</div>
+                  <div>Controller of Examinations:</div>
+                </div>
+              </Box>
+            </Box>
           )}
         </Box>
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Box, Button, FormControl, InputLabel, Select, MenuItem, Paper, SelectChangeEvent, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 import html2canvas from 'html2canvas-pro';
-import { jsPDF } from 'jspdf';  
+import { jsPDF } from 'jspdf';
 
 declare global {
   interface Window {
@@ -97,38 +97,73 @@ export const PrintTranscript = () => {
   ];
 
 
-const handleDownloadPDF = async () => {
-  const sectionId = page === 'front' ? 'transcript-front' : 'transcript-back';
-  const element = document.getElementById(sectionId);
+  const handleDownloadPDF = async () => {
+    // Determine which section to download
+    const sectionId = page === 'front' ? 'transcript-front' : 'transcript-back';
+    const element = document.getElementById(sectionId);
 
-  if (!element) {
-    console.warn("Transcript section not found.");
-    return;
-  }
+    if (!element) {
+      console.warn("Transcript section not found.");
+      return;
+    }
 
-  const canvas = await html2canvas(element, {
-    scale: 2,
-    useCORS: true,
-    backgroundColor: "#ffffff"
-  });
+    // Initialize jsPDF instance
+    const pdf = new jsPDF('p', 'mm', 'a4');
 
-  const imgData = canvas.toDataURL('image/jpeg', 1.0);
-  const pdf = new jsPDF('p', 'mm', 'a4');
+    // For the backside page, add the heading as a separate element at the top
+    if (page === 'back') {
+      const headingElement = document.getElementById('transcript-back-heading');
+      if (headingElement) {
+        // Get the text of the heading
+        const headingText = headingElement.innerText;
 
-  const imgProps = pdf.getImageProperties(imgData);
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        // Calculate the width of the heading text
+        const textWidth = pdf.getTextWidth(headingText); // Get the width of the text
 
-  pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-  pdf.save(`${sectionId}.pdf`);
-};
+        // Calculate the x-position to center the heading
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const xPos = (pdfWidth - textWidth) / 2; // Center the text horizontally
 
-  console.log("html2canvas version in use:", window.html2canvas);
+        // Set the font size and style (optional, can be customized)
+        pdf.setFontSize(16); // Set font size for the heading
+        pdf.setFont("times"); // Set font family for the heading (optional)
 
+        // Add the heading text to the PDF at the calculated x position
+        pdf.text(headingText, xPos, 20); // y position 20
+      }
+    }
 
+    // Create a canvas from the selected element
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff"
+    });
+
+    // Convert canvas to image data
+    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+    // Get image properties
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+
+    // Calculate pdf height while maintaining aspect ratio
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    // Set padding values (adjust as needed)
+    const padding = 10;  // 10mm padding from the top and left
+    const xPos = padding;
+    const yPos = 30; // Adjust to ensure the heading doesn't overlap with the content
+
+    // Add the image to the PDF with padding applied
+    pdf.addImage(imgData, 'JPEG', xPos, yPos, pdfWidth - 2 * padding, pdfHeight - 2 * padding);
+
+    // Save the PDF
+    pdf.save(`${sectionId}.pdf`);
+  };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', overflow: "auto" }} id="transcript-front">
+    <Box sx={{ display: 'flex', flexDirection: 'column', overflow: "auto" }} >
       {/* Header with Dropdown for Front/Back selection */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
         <FormControl sx={{ width: '30%' }}>
@@ -155,7 +190,7 @@ const handleDownloadPDF = async () => {
       </Box>
 
       {/* Scrollable Container for Transcript */}
-      <Paper sx={{ padding: 2, overflow: 'auto', maxHeight: '680px' }}>
+      <Paper id="transcript-front" sx={{ padding: 2, overflow: 'auto', maxHeight: '680px' }}>
         <Box
           sx={{
             position: "sticky",
@@ -164,23 +199,30 @@ const handleDownloadPDF = async () => {
             backgroundColor: "white",
             textAlign: "center",
             py: 2,
-            minWidth: '1100px', // Ensure full width
+            minWidth: '1100px',
           }}
         >
 
           {page === 'front' ? (
             <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Transcript</div>
-          ) : (<div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Interpretation of Transcript Contents</div>)}
-
+          ) : (<div id="transcript-back-heading" className="text-xl font-semibold text-gray-800 sm:text-2xl  md:text-3xl">Interpretation of Transcript Contents</div>)}
 
         </Box>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap', width: '100%', minWidth: '1100px', overflow: 'auto' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexWrap: 'nowrap',
+            width: '100%',
+            minWidth: '1100px',
+            overflow: 'auto'
+          }}>
           {/* Show Front or Back of Transcript based on Selection */}
           {page === "front" ? (
             <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
               {/* First Column for First Half of Data */}
-              <Box id ="test" sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <Box id="test" sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <div><strong>Name:</strong> Riyan Jamil</div>
                 <div><strong>Roll No:</strong> 2023F-BSE-075</div>
                 <div><strong>Degree Status:</strong> In-Progress</div>
@@ -510,8 +552,6 @@ const handleDownloadPDF = async () => {
 
           </>
         )}
-
-
 
       </Paper>
     </Box>

@@ -1,4 +1,5 @@
-import { Box, Paper, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
+import { Box, Button, Paper, Stack, Table, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
+import { SaveIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const sessions = [
@@ -16,33 +17,25 @@ const sessions = [
   },
 ];
 
-const courses = [
-  {
-    value: 'Introduction To Database Systems',
-    label: 'Introduction To Database Systems'
-  },
-  {
-    value: 'Introduction To Database Systems Lab',
-    label: 'Introduction To Database Systems Lab'
-  },
-  {
-    value: 'Probability & Statistics',
-    label: 'Probability & Statistics'
-  },
-  {
-    value: 'Technical Report Writing',
-    label: 'Technical Report Writing'
-  },
-  {
-    value: 'Software Design & Architecture',
-    label: 'Software Design & Architecture'
-  },
-  {
-    value: 'Software Design & Architecture Lab',
-    label: 'Software Design & Architecture Lab'
-  }
+interface Course {
+  value: string;
+  label: string;
+}
 
-]
+const courses: { [key: string]: Course[] } = {
+  'Spring 2025': [
+    { value: 'Introduction To Database Systems', label: 'Introduction To Database Systems' },
+    { value: 'Introduction To Database Systems Lab', label: 'Introduction To Database Systems Lab' },
+  ],
+  'Fall 2024': [
+    { value: 'Probability & Statistics', label: 'Probability & Statistics' },
+    { value: 'Technical Report Writing', label: 'Technical Report Writing' },
+  ],
+  'Fall 2023': [
+    { value: 'Software Design & Architecture', label: 'Software Design & Architecture' },
+    { value: 'Software Design & Architecture Lab', label: 'Software Design & Architecture Lab' },
+  ]
+};
 
 const createData = (
   assementType: string,
@@ -53,38 +46,50 @@ const createData = (
   totalMarks: number,
   marksObtained: number
 ) => {
-  return {
-    assementType, assessment, courseCode, sectionCode, teacher, totalMarks, marksObtained
-  }
-}
+  return { assementType, assessment, courseCode, sectionCode, teacher, totalMarks, marksObtained };
+};
 
 const rows = [
-  createData('Mid Term', 'MT1', 'INTRODUCTION TO DATABASE SYSTEMS, ( SE209T )', 'Spring 2025-2023F-BS-SE-SE209T-B-17231',
-    'Engr. Kiran Hidayat', 15, 14),
-  createData('Mid Term', 'MT2', 'INTRODUCTION TO DATABASE SYSTEMS, ( SE209T )', 'Spring 2025-2023F-BS-SE-SE209T-B-17231',
-    'Engr. Kiran Hidayat', 15, 14),
-]
+  createData('Mid Term', 'MT1', 'INTRODUCTION TO DATABASE SYSTEMS, ( SE209T )', 'Spring 2025-2023F-BS-SE-SE209T-B-17231', 'Engr. Kiran Hidayat', 15, 14),
+  createData('Mid Term', 'MT2', 'INTRODUCTION TO DATABASE SYSTEMS, ( SE209T )', 'Spring 2025-2023F-BS-SE-SE209T-B-17231', 'Engr. Kiran Hidayat', 15, 14),
+];
 
 export const AssessmentResult = () => {
-  const [selectedCourse, setSelectedCourse] = useState("");
+  const [selectedSession, setSelectedSession] = useState('Spring 2025');
+  const [selectedCourse, setSelectedCourse] = useState('');
   const [filteredRows, setFilteredRows] = useState(rows);
+  const [isLoading, setIsLoading] = useState(true);
 
+  const handleSessionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedSession(event.target.value);
+    setSelectedCourse(''); // Reset course selection
+  };
 
   const handleCourseChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedCourse(event.target.value);
   };
 
   useEffect(() => {
-    // Filter the rows based on the selected course whenever the course changes
     if (selectedCourse) {
-      const newFilteredRows = rows.filter(row =>
+      const newFilteredRows = rows.filter((row) =>
         row.courseCode.toLowerCase().includes(selectedCourse.toLowerCase())
       );
       setFilteredRows(newFilteredRows);
     } else {
-      setFilteredRows(rows);
+      setFilteredRows([]);
     }
+    setIsLoading(false);
   }, [selectedCourse]);
+
+
+  useEffect(() => {
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false); // Stop loading after 2 seconds
+    }, 2000);
+
+    return () => clearTimeout(loadingTimeout);
+  }, []);
+
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', overflow: "auto" }} >
@@ -100,7 +105,7 @@ export const AssessmentResult = () => {
             minWidth: '1100px',
           }}
         >
-          <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Assesment Result</div>
+          <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Assessment Result</div>
           <Box sx={{ display: 'flex', flexDirection: 'row', gap: '1rem', marginTop: 4, minWidth: '1100px', width: '100%' }}>
             <Box
               component="form"
@@ -113,10 +118,10 @@ export const AssessmentResult = () => {
                   id="outlined-select-currency-native"
                   select
                   label="Session"
+                  value={selectedSession}
+                  onChange={handleSessionChange}
                   slotProps={{
-                    select: {
-                      native: true,
-                    },
+                    select: { native: true },
                   }}
                   helperText="Please select your session"
                 >
@@ -130,18 +135,15 @@ export const AssessmentResult = () => {
                 <TextField
                   id="outlined-select-currency-native"
                   select
-                  label="Course"
                   value={selectedCourse}
                   onChange={handleCourseChange}
                   slotProps={{
-                    select: {
-                      native: true,
-                    },
+                    select: { native: true },
                   }}
                   helperText="Please select your course"
                 >
-                  <option value="" disabled></option>
-                  {courses.map((option) => (
+                  <option value="" disabled>Select a course</option>
+                  {selectedSession && courses[selectedSession]?.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
@@ -151,42 +153,52 @@ export const AssessmentResult = () => {
             </Box>
           </Box>
 
-          <TableContainer component={Paper} sx={{ marginBottom: 4, flexDirection: 'column' }}>
-            <Table sx={{ minWidth: 450 }} size="small" aria-label="a dense table">
-              <TableHead>
-                <TableRow sx={{
-                  backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
-                }}>
-                  <TableCell sx={{ flex: 0.5 }}>Assesment Type</TableCell>
-                  <TableCell sx={{ flex: 2 }}>Assesment</TableCell>
-                  <TableCell align="left" sx={{ flex: 1 }}>Course (Code) </TableCell>
-                  <TableCell align="left" sx={{ flex: 1 }}>Section Code</TableCell>
-                  <TableCell align="left" sx={{ flex: 1 }}>Teacher</TableCell>
-                  <TableCell align="left" sx={{ flex: 1 }}>Total Marks</TableCell>
-                  <TableCell align="left" sx={{ flex: 1 }}>Marks Obtained</TableCell>
-                </TableRow>
-              </TableHead>
-              {filteredRows.length > 0 ? (
-                filteredRows.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{row.assementType}</TableCell>
-                    <TableCell>{row.assessment}</TableCell>
-                    <TableCell align="left">{row.courseCode}</TableCell>
-                    <TableCell align="left">{row.sectionCode}</TableCell>
-                    <TableCell align="left">{row.teacher}</TableCell>
-                    <TableCell align="left">{row.totalMarks}</TableCell>
-                    <TableCell align="left">{row.marksObtained}</TableCell>
+          {isLoading ? (
+            <Stack spacing={2}>
+              <Stack direction="row" spacing={2}>
+                <Button loading variant="outlined">
+                  Submit
+                </Button>
+              </Stack>
+            </Stack>
+          ) : (
+            <TableContainer component={Paper} sx={{ marginBottom: 4, flexDirection: 'column' }}>
+              <Table sx={{ minWidth: 450 }} size="small" aria-label="a dense table">
+                <TableHead>
+                  <TableRow sx={{
+                    backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
+                  }}>
+                    <TableCell sx={{ flex: 0.5 }}>Assessment Type</TableCell>
+                    <TableCell sx={{ flex: 2 }}>Assessment</TableCell>
+                    <TableCell align="center" sx={{ flex: 1 }}>Course (Code)</TableCell>
+                    <TableCell align="center" sx={{ flex: 1 }}>Section Code</TableCell>
+                    <TableCell align="center" sx={{ flex: 1 }}>Teacher</TableCell>
+                    <TableCell align="left" sx={{ flex: 1 }}>Total Marks</TableCell>
+                    <TableCell align="left" sx={{ flex: 1 }}>Marks Obtained</TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={7} align="center">No data available for the selected course</TableCell>
-                </TableRow>
-              )}
-            </Table>
-          </TableContainer>
+                </TableHead>
+                {filteredRows.length > 0 ? (
+                  filteredRows.map((row, index) => (
+                    <TableRow key={index}>
+                      <TableCell align="center">{row.assementType}</TableCell>
+                      <TableCell align="center">{row.assessment}</TableCell>
+                      <TableCell align="left">{row.courseCode}</TableCell>
+                      <TableCell align="left">{row.sectionCode}</TableCell>
+                      <TableCell align="left">{row.teacher}</TableCell>
+                      <TableCell align="center">{row.totalMarks}</TableCell>
+                      <TableCell align="center">{row.marksObtained}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">No data available for the selected course</TableCell>
+                  </TableRow>
+                )}
+              </Table>
+            </TableContainer>
+          )}
         </Box>
       </Paper>
     </Box>
-  )
-}
+  );
+};

@@ -1,5 +1,4 @@
 import { Box, Button, Paper, Stack, Table, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
-import { SaveIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const sessions = [

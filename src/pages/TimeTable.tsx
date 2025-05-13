@@ -166,7 +166,7 @@ function TimeTable() {
   };
 
   return (
-    <Paper sx={{ width: '100%' }}>
+    <Paper sx={{ width: '100%'}}>
       {/* Sticky Heading */}
       <Box
         sx={{

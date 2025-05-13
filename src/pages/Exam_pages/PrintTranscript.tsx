@@ -163,7 +163,7 @@ export const PrintTranscript = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', overflow: "auto" }} >
+    <Box sx={{ display: 'flex', flexDirection: 'column' }} >
       {/* Header with Dropdown for Front/Back selection */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
         <FormControl sx={{ width: '30%' }}>
@@ -190,7 +190,7 @@ export const PrintTranscript = () => {
       </Box>
 
       {/* Scrollable Container for Transcript */}
-      <Paper id="transcript-front" sx={{ padding: 2, overflow: 'auto', maxHeight: '680px' }}>
+      <Paper id="transcript-front" sx={{ padding: 2, maxHeight: '100%' }}>
         <Box
           sx={{
             position: "sticky",
@@ -443,7 +443,7 @@ export const PrintTranscript = () => {
               </TableContainer>
             </Box>
 
-            <TableContainer component={Paper} sx={{ marginBottom: 2 }}>
+            <TableContainer component={Paper} sx={{ marginBottom: 6 , marginTop:6, boxShadow: 'none', border: 'none'}}>
               <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mb: 2 }}>
                 <Table sx={{ maxWidth: 650 }} aria-label="simple table">
                   <TableHead sx={{ backgroundColor: 'rgb(209 213 219)' }}>
@@ -466,7 +466,7 @@ export const PrintTranscript = () => {
               </Box>
             </TableContainer>
 
-            <TableContainer component={Paper} sx={{ marginBottom: 2, overflow: 'unset' }}>
+            <TableContainer component={Paper} sx={{ marginBottom: 2, overflow: 'unset'}}>
               <Table sx={{ minWidth: 1100 }} size="small" aria-label="a dense table">
                 <TableHead>
                   <TableRow sx={{
@@ -528,7 +528,7 @@ export const PrintTranscript = () => {
               </div>
             </Box>
 
-            <Box sx={{ overflow: 'auto', display: 'flex', flexDirection: 'column', minWidth: '1100px', mb: '40', gap: '0.5rem' }}>
+            <Box sx={{ overflow: 'auto', display: 'flex', flexDirection: 'column', minWidth: '1100px', mb: '8rem', gap: '0.5rem' }}>
               <div className='text-xl'>
                 DISCLAIMER/PROCLAMATION
               </div>

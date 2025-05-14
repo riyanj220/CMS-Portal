@@ -1,8 +1,8 @@
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 
-interface Data{
-  title :string,
+interface Data {
+  title: string,
   date: string
 }
 
@@ -17,10 +17,10 @@ const Announcement = () => {
     },
   ]
 
-  const createData = (title:string, date:string):Data => {
-      return {
-        title, date
-      }
+  const createData = (title: string, date: string): Data => {
+    return {
+      title, date
+    }
   };
 
   const rows = [
@@ -34,7 +34,7 @@ const Announcement = () => {
   ]
 
   return (
-    <Paper sx={{ width: "90%" , margin: "0 auto", maxWidth: "1200px", padding: "1rem", '@media (min-width: 600px)': { padding: "2rem" }}}>
+    <Paper sx={{ width: "90%", margin: "0 auto", maxWidth: "1200px", padding: "1rem", '@media (min-width: 600px)': { padding: "2rem" } }}>
       {/* Sticky Heading */}
       <Box
         sx={{
@@ -49,7 +49,12 @@ const Announcement = () => {
         <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Announcements</div>
       </Box>
 
-      <TableContainer sx={{ maxHeight: { xs: 500, sm: 600 } }}>
+      <TableContainer sx={{
+        maxHeight: 600,
+        '@media (max-device-width: 768px)': {
+          maxHeight: 'unset',
+        },
+      }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -68,7 +73,7 @@ const Announcement = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row,index) => (
+            {rows.map((row, index) => (
               <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                 <TableCell sx={{ textAlign: "center" }}>{row.title}</TableCell>
                 <TableCell sx={{ textAlign: "center" }}>{row.date}</TableCell>

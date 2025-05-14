@@ -130,7 +130,12 @@ const Attendance = () => {
       </Box>
 
       <TableContainer
-        // {/* sx={{ maxHeight: { xs: 500, sm: 600 } }} */}
+        sx={{
+          maxHeight: 600,
+          '@media (max-device-width: 768px)': {
+            maxHeight: 'unset',
+          },
+        }}
         >
         <Table stickyHeader aria-label="sticky table">
           <TableHead>

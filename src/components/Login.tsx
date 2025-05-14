@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { Helmet } from "react-helmet";
 
 const label = { inputProps: { 'aria-label': 'Remember me' } };
 
@@ -63,94 +64,100 @@ export const Login = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center sm:flex flex-col sm:gap-5 md:flex-row md:gap-5">
-            <div className=" bg-white p-8 rounded-xl w-full max-w-sm sm:order-last md:order-first">
-                {/* Logo */}
-                <div className="flex justify-center mb-6">
-                    <img src="images/login-logo.jpg" alt="Logo" className="w-32 h-32" />
+        <>
+            <Helmet>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            </Helmet>
+            
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center sm:flex flex-col sm:gap-5 md:flex-row md:gap-5">
+                <div className=" bg-white p-8 rounded-xl w-full max-w-sm sm:order-last md:order-first">
+                    {/* Logo */}
+                    <div className="flex justify-center mb-6">
+                        <img src="images/login-logo.jpg" alt="Logo" className="w-32 h-32" />
+                    </div>
+
+                    {/* Title and description */}
+                    <div className="text-center mb-4">
+                        <h2 className="text-2xl font-semibold">Student Portal</h2>
+                        <p className="text-gray-600">Enter your registration No and password</p>
+                    </div>
+
+                    {/* Form */}
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        {/* Registration No Input */}
+                        <div className="mb-4">
+                            <Input
+                                id="registration-no"
+                                placeholder="Registration No"
+                                fullWidth
+                                error={!!registrationError}
+                                value={registrationNo}
+                                onChange={(e) => setRegistrationNo(e.target.value)}
+                            />
+                            {registrationError && (
+                                <FormHelperText error={!!registrationError} className="mt-1">
+                                    {registrationError}
+                                </FormHelperText>
+                            )}
+                        </div>
+
+                        {/* Password Input */}
+                        <div className="mb-4">
+                            <Input
+                                id="outlined-adornment-password"
+                                placeholder="Password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                fullWidth
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label={showPassword ? 'hide password' : 'show password'}
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                            onMouseUp={handleMouseUpPassword}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                            {passwordError && (
+                                <FormHelperText error={!!passwordError} className="mt-1">
+                                    {passwordError}
+                                </FormHelperText>
+                            )}
+                        </div>
+
+                        {/* Remember me Checkbox */}
+                        <div className="flex items-center space-x-2 mb-4">
+                            <Checkbox {...label} defaultChecked />
+                            <span className="text-sm text-gray-600">Remember me</span>
+                        </div>
+
+                        {/* Forgot password link */}
+                        <div className="text-right text-sm text-blue-600 mb-4">
+                            <a href="#" className="hover:underline">Forgot your password?</a>
+                        </div>
+
+                        {/* Sign In Button */}
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            fullWidth
+                        >
+                            Sign In
+                        </Button>
+                    </form>
                 </div>
 
-                {/* Title and description */}
-                <div className="text-center mb-4">
-                    <h2 className="text-2xl font-semibold">Student Portal</h2>
-                    <p className="text-gray-600">Enter your registration No and password</p>
+                <div className="hidden sm:block sm:h-[100vh] relative w-full md:h-[100vh]">
+                    <img src="images/login-picture.jpg" alt="Student" className="absolute w-full h-full top-0 right-0 bottom-0 left-0" />
                 </div>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-5">
-                    {/* Registration No Input */}
-                    <div className="mb-4">
-                        <Input
-                            id="registration-no"
-                            placeholder="Registration No"
-                            fullWidth
-                            error={!!registrationError}
-                            value={registrationNo}
-                            onChange={(e) => setRegistrationNo(e.target.value)}
-                        />
-                        {registrationError && (
-                            <FormHelperText error={!!registrationError} className="mt-1">
-                                {registrationError}
-                            </FormHelperText>
-                        )}
-                    </div>
-
-                    {/* Password Input */}
-                    <div className="mb-4">
-                        <Input
-                            id="outlined-adornment-password"
-                            placeholder="Password"
-                            type={showPassword ? 'text' : 'password'}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            fullWidth
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label={showPassword ? 'hide password' : 'show password'}
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        onMouseUp={handleMouseUpPassword}
-                                        edge="end"
-                                    >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                        />
-                        {passwordError && (
-                            <FormHelperText error={!!passwordError} className="mt-1">
-                                {passwordError}
-                            </FormHelperText>
-                        )}
-                    </div>
-
-                    {/* Remember me Checkbox */}
-                    <div className="flex items-center space-x-2 mb-4">
-                        <Checkbox {...label} defaultChecked />
-                        <span className="text-sm text-gray-600">Remember me</span>
-                    </div>
-
-                    {/* Forgot password link */}
-                    <div className="text-right text-sm text-blue-600 mb-4">
-                        <a href="#" className="hover:underline">Forgot your password?</a>
-                    </div>
-
-                    {/* Sign In Button */}
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                        fullWidth
-                    >
-                        Sign In
-                    </Button>
-                </form>
             </div>
-
-            <div className="hidden sm:block sm:h-[100vh] relative w-full md:h-[100vh]">
-                <img src="images/login-picture.jpg" alt="Student" className="absolute w-full h-full top-0 right-0 bottom-0 left-0" />
-            </div>
-        </div>
+        </>
     );
 };

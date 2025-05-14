@@ -129,7 +129,9 @@ const Attendance = () => {
         <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Attendance</div>
       </Box>
 
-      <TableContainer sx={{ maxHeight: { xs: 500, sm: 600 } }}>
+      <TableContainer
+        // {/* sx={{ maxHeight: { xs: 500, sm: 600 } }} */}
+        >
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>

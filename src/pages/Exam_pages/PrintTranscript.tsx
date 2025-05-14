@@ -248,7 +248,7 @@ export const PrintTranscript = () => {
             </Box>
           ) : (
             <Box id="transcript-back" sx={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: 4, minWidth: '1100px', width: '100%' }}>
-              <TableContainer component={Paper}>
+              <TableContainer component={Paper} sx={{mb:'2rem'}}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                   <TableHead>
                     <TableRow sx={{
@@ -313,7 +313,7 @@ export const PrintTranscript = () => {
                     </div>
                   </div>
 
-                  <div className="text-lg font-bold underline mt-5">Degree Requirements:</div>
+                  <div className="text-lg font-bold underline mt-10">Degree Requirements:</div>
                   <div className='text-lg font-semibold'>
                     Cumulative Grade Point Average (CGPA) minimum 2.0 calculated for all semesters.
                   </div>
@@ -323,7 +323,7 @@ export const PrintTranscript = () => {
                 </div>
               </Box>
 
-              <Box>
+              <Box sx={{mb:'4rem'}}>
                 <div className='flex flex-col gap-2 mb-4 text-lg font-semibold'>
                   <div>Charter Date:	25-Oct-95</div>
                   <div>Date of Admission:</div>

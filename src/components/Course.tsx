@@ -113,12 +113,12 @@ function Course() {
       </Box>
 
       <TableContainer
-        sx={{
-          maxHeight: {
-            xs: 500,
-            sm: 600,
-          },
-        }}
+        // sx={{
+        //   maxHeight: {
+        //     xs: 500,
+        //     sm: 600,
+        //   },
+        // }}
       >
         <Table stickyHeader aria-label="sticky table">
           <TableHead>

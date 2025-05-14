@@ -181,14 +181,7 @@ function TimeTable() {
         <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4  md:text-3xl">Time Table</div>
       </Box>
 
-      <TableContainer
-        sx={{
-          maxHeight: {
-            xs: 500,
-            sm: 600,
-          },
-        }}
-      >
+      <TableContainer>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>

@@ -1,5 +1,6 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
+import DegreeCompletionCard from "./dashboardComponents/DegreeCompletionCard";
 
 function createDataForMyCourses(
     name: string,
@@ -36,6 +37,16 @@ const dataForGpa = [
     { name: 'Spring 2024', gpa: 3.98 },
     { name: 'Fall 2024', gpa: 3.94 },
 ];
+
+
+const todoListData = (() => {
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    return tasks.slice(0, 5).map((task: any) => ({
+        task: task.task,
+        dueDate: task.dueDate,
+        status: task.status,
+    }));
+})();
 
 
 export const Dashboard = () => {
@@ -110,7 +121,7 @@ export const Dashboard = () => {
                     </Typography>
                 </Box>
 
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '2.5rem', }}>
                     <Box
                         sx={{
                             background: "linear-gradient(to bottom, #f84c64 40%, #f0f0f0 40%)", // Tailwind red-400 approx
@@ -271,7 +282,7 @@ export const Dashboard = () => {
                     <Box
                         sx={{
                             maxWidth: '100%',
-                            backgroundColor: 'grey.200',
+                            backgroundColor: "#f9fafb",
                             borderRadius: 2,
                             p: 4,
                             mb: 4,
@@ -350,14 +361,14 @@ export const Dashboard = () => {
                             borderRadius: 2,
                             boxShadow: "0px 2px 12px rgba(0,0,0,0.05)",
                             p: 2,
-                            backgroundColor: "white",
-                            mb: 10
+                            backgroundColor: "#f9fafb",
+                            mb: 5
                         }}
                     >
                         {/* Header */}
                         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                             <Typography sx={{ fontWeight: "600", fontSize: "24px" }}>My Activity</Typography>
-                            <Button size="medium" variant="contained" sx={{ borderRadius: 2, textTransform: "none", backgroundColor: "#8b5cf6" }}>
+                            <Button size="large" variant="contained" sx={{ borderRadius: 2, textTransform: "none", backgroundColor: "#8b5cf6" }}>
                                 View
                             </Button>
                         </Box>
@@ -388,22 +399,22 @@ export const Dashboard = () => {
                         </Box>
                     </Box>
 
-                    
+
                     {/* Chart of GPA */}
                     <Box
                         sx={{
                             width: '100%',
                             maxWidth: 700,
-                            borderRadius: 3,
+                            borderRadius: 2,
                             boxShadow: "0px 4px 16px rgba(0,0,0,0.06)",
-                            p: 4,
-                            backgroundColor: "white",
-                            mb:10
+                            p: 3,
+                            backgroundColor: "#f9fafb",
+                            mb: 5,
                         }}
                     >
                         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                             <Typography sx={{ fontWeight: "600", fontSize: "24px" }}>My GPA</Typography>
-                            <Button size="medium" variant="contained" sx={{ borderRadius: 2, textTransform: "none", backgroundColor: "#8b5cf6" }}>
+                            <Button size="large" variant="contained" sx={{ borderRadius: 2, textTransform: "none", backgroundColor: "#8b5cf6" }}>
                                 View
                             </Button>
                         </Box>
@@ -411,7 +422,7 @@ export const Dashboard = () => {
                         <ResponsiveContainer width="100%" height={500}>
                             <LineChart
                                 data={dataForGpa}
-                                margin={{ top: 24, right: 50, left: 0, bottom: 0 }}
+                                margin={{ top: 24, right: 30, left: 0, bottom: 0 }}
                             >
                                 <defs>
                                     <linearGradient id="gpaGradient" x1="0" y1="0" x2="0" y2="1">
@@ -420,11 +431,11 @@ export const Dashboard = () => {
                                     </linearGradient>
                                 </defs>
 
-                                <XAxis dataKey="name" tick={{ fontSize: 16 ,fontWeight: 'bold'}} padding={{ left: 30, right: 20 }}/>
+                                <XAxis dataKey="name" tick={{ fontSize: 16, fontWeight: 'bold' }} padding={{ left: 30, right: 20 }} />
                                 <YAxis
                                     domain={[0, 4]}
                                     ticks={[0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2, 3.6, 4.0]}
-                                    tick={{ fontSize: 16 , fontWeight: 'bold'}}
+                                    tick={{ fontSize: 16, fontWeight: 'bold' }}
                                 />
                                 <Tooltip
                                     contentStyle={{
@@ -458,6 +469,99 @@ export const Dashboard = () => {
                             </LineChart>
                         </ResponsiveContainer>
                     </Box>
+
+
+                    {/* Todo list card */}
+                    <Box
+                        sx={{
+                            width: "100%",
+                            maxWidth: 380,
+                            borderRadius: 3,
+                            backgroundColor: "#f9fafb",
+                            p: 3,
+                            boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+                            mb: 5,
+                        }}
+                    >
+                        {/* Header */}
+                        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+                            <Typography sx={{ fontWeight: "600", fontSize: "24px" }}>Todo List</Typography>
+                            <Button
+                                size="large"
+                                variant="contained"
+                                sx={{
+                                    textTransform: "none",
+                                    backgroundColor: "#8b5cf6",
+                                    fontWeight: "500",
+                                    fontSize: "13px",
+                                    borderRadius: 2,
+                                }}
+                            >
+                                View
+                            </Button>
+                        </Box>
+
+                        {/* Task Items */}
+                        {todoListData.length === 0 ? (
+                            <Typography sx={{ color: "gray", fontSize: 14 }}>No tasks yet</Typography>
+                        ) : (
+                            todoListData.map((item: { task: string; dueDate: string; status: string }, idx: number) => (
+                                <Box
+                                    key={idx}
+                                    sx={{
+                                        mb: 2,
+                                        p: 2,
+                                        borderRadius: 2,
+                                        backgroundColor: "white",
+                                        boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+                                    }}
+                                >
+                                    <Typography
+                                        sx={{
+                                            fontWeight: 600,
+                                            fontSize: 15,
+                                            mb: 0.5,
+                                            whiteSpace: "nowrap",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                        }}
+                                    >
+                                        {item.task}
+                                    </Typography>
+                                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                        <Typography sx={{ fontSize: 13, color: "gray" }}>{item.dueDate}</Typography>
+                                        <Typography
+                                            sx={{
+                                                fontSize: 12,
+                                                px: 1.2,
+                                                py: 0.3,
+                                                borderRadius: 1,
+                                                backgroundColor:
+                                                    item.status === "Completed"
+                                                        ? "#d1fae5"
+                                                        : item.status === "In Progress"
+                                                            ? "#fef3c7"
+                                                            : "#e5e7eb",
+                                                color:
+                                                    item.status === "Completed"
+                                                        ? "#059669"
+                                                        : item.status === "In Progress"
+                                                            ? "#b45309"
+                                                            : "#6b7280",
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            {item.status}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            ))
+                        )}
+                    </Box>
+
+
+                    {/* Degree completion */}
+                    <DegreeCompletionCard progress={55} />
 
 
                 </Box>

@@ -93,56 +93,56 @@ const rows = [
     '11:30:00-14:30:00',
     ''
   ),
-  
+
   createData(
     'Operating System',
     'SE204T',
     'Spring 2025-2023F-BS-SE-SE204T-B-17236',
-    '9:30:00-10:30:00 || 16:30:00-17:30:00' ,
+    '9:30:00-10:30:00 || 16:30:00-17:30:00',
     '',
     '16:30:00-17:30:00',
     '',
     ''
   ),
-  
+
   createData(
     'Introduction to Database Lab',
     'SE209L',
     'Spring 2025-2023F-BS-SE-SE209L-B-17234',
-    '' ,
+    '',
     '',
     '',
     '',
     '09:30:00-12:30:00'
   ),
-  
+
   createData(
     'Introduction to Database Systems',
     'SE209T',
     'Spring 2025-2023F-BS-SE-SE209T-B-17231',
-    '14:30:00-15:30:00' ,
+    '14:30:00-15:30:00',
     '',
     '',
     '08:30:00-09:30:00 || 09:30:00-10:30:00',
     ''
   ),
-  
+
   createData(
     'Software Design and Architecture Lab',
     'SE211L',
     'Spring 2025-2023F-BS-SE-SE211L-B-17224',
-    '11:30:00-14:30:00' ,
+    '11:30:00-14:30:00',
     '',
     '',
     '',
     ''
   ),
-  
+
   createData(
     'Software Design and Architecture',
     'SE211T',
     'Spring 2025-2023F-BS-SE-SE211T-B-17240',
-    '8:30:00-9:30:00' ,
+    '8:30:00-9:30:00',
     '',
     '8:30:00 - 9:30:00',
     '14:30:00 - 15:30:00',
@@ -166,7 +166,7 @@ function TimeTable() {
   };
 
   return (
-    <Paper sx={{ width: '100%'}}>
+    <Paper sx={{ width: '100%' }}>
       {/* Sticky Heading */}
       <Box
         sx={{
@@ -182,11 +182,24 @@ function TimeTable() {
       </Box>
 
       <TableContainer sx={{
-          maxHeight: 600,
-          '@media (max-device-width: 768px)': {
-            maxHeight: 'unset',
-          },
-        }}>
+        maxHeight: 600,
+        '@media (max-device-width: 768px)': {
+          maxHeight: 'unset',
+        },
+        "&::-webkit-scrollbar": {
+          width: "6px",         // narrow width
+          height: "6px",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "#c4b5fd", // soft purple scroll thumb
+          borderRadius: "3px",
+        },
+        "&::-webkit-scrollbar-track": {
+          backgroundColor: "#f3f4f6", // light gray track
+        },
+        scrollbarWidth: "thin", // for Firefox
+        scrollbarColor: "#c4b5fd #f3f4f6",
+      }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -195,8 +208,8 @@ function TimeTable() {
                   key={column.id}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
-                  sx={{ backgroundColor: '#E5E7EB' ,fontWeight: 'bold'}}
-                  
+                  sx={{ backgroundColor: '#E5E7EB', fontWeight: 'bold' }}
+
                 >
                   {column.label}
                 </TableCell>

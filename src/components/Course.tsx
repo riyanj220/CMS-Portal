@@ -118,6 +118,19 @@ function Course() {
           '@media (max-device-width: 768px)': {
             maxHeight: 'unset',
           },
+          "&::-webkit-scrollbar": {
+            width: "6px",         // narrow width
+            height: "6px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#c4b5fd", // soft purple scroll thumb
+            borderRadius: "3px",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "#f3f4f6", // light gray track
+          },
+          scrollbarWidth: "thin", // for Firefox
+          scrollbarColor: "#c4b5fd #f3f4f6",
         }}
       >
         <Table stickyHeader aria-label="sticky table">

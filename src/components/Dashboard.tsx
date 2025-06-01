@@ -1,6 +1,8 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 import DegreeCompletionCard from "./dashboardComponents/DegreeCompletionCard";
+import FinancialLedgerCard from "./dashboardComponents/FinancialLedgerCard";
+import { Link } from 'react-router';
 
 function createDataForMyCourses(
     name: string,
@@ -294,15 +296,16 @@ export const Dashboard = () => {
                                 variant="h6"
                                 component="h2"
                                 sx={{
-                                    fontWeight: 'bold',
                                     color: 'text.primary',
                                     letterSpacing: 1,
-                                    textAlign: 'center'
+                                    textAlign: 'center',
+                                    fontWeight: 700, 
+                                    fontSize: 24
                                 }}
                             >
                                 Overview
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, textAlign: 'center' }}>
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, textAlign: 'center', fontSize: 16}}>
                                 Spring 2025
                             </Typography>
                         </Box>
@@ -486,19 +489,21 @@ export const Dashboard = () => {
                         {/* Header */}
                         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
                             <Typography sx={{ fontWeight: "600", fontSize: "24px" }}>Todo List</Typography>
-                            <Button
-                                size="large"
-                                variant="contained"
-                                sx={{
-                                    textTransform: "none",
-                                    backgroundColor: "#8b5cf6",
-                                    fontWeight: "500",
-                                    fontSize: "13px",
-                                    borderRadius: 2,
-                                }}
-                            >
-                                View
-                            </Button>
+                            <Link to="/dashboard/general/todo-list" style={{ textDecoration: 'none' }}>
+                                <Button
+                                    size="large"
+                                    variant="contained"
+                                    sx={{
+                                        textTransform: "none",
+                                        backgroundColor: "#8b5cf6",
+                                        fontWeight: "500",
+                                        fontSize: "13px",
+                                        borderRadius: 2,
+                                    }}
+                                >
+                                    View
+                                </Button>
+                            </Link>
                         </Box>
 
                         {/* Task Items */}
@@ -563,6 +568,8 @@ export const Dashboard = () => {
                     {/* Degree completion */}
                     <DegreeCompletionCard progress={55} />
 
+                    {/*Finantial Ledger*/}
+                    <FinancialLedgerCard />
 
                 </Box>
 

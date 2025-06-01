@@ -9,7 +9,6 @@ const DegreeCompletionCard = ({ progress = 0 }) => {
         p: 5,
         borderRadius: 4,
         backgroundColor: "#f9fafb",
-        // boxShadow: "0 6px 20px rgba(0, 0, 0, 0.08)",
         textAlign: "center",
         mb: 5,
       }}

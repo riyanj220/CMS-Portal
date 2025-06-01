@@ -1,4 +1,5 @@
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 
 function createDataForMyCourses(
     name: string,
@@ -18,11 +19,29 @@ const rowsForMyCourses = [
 
 ];
 
+const activityData = [
+    { date: "01-06", time: "09:50", label: "Login Details : Student Logged In", color: "#3b82f6" },
+    { date: "31-05", time: "07:51", label: "Login Details : Student Logged In", color: "#3b82f6" },
+    { date: "31-05", time: "12:19", label: "Login Details : Student Logged In", color: "#3b82f6" },
+    { date: "19-04", time: "01:28", label: "Fee Charging : Students Activities : 1,100", color: "#f59e0b" },
+    { date: "19-04", time: "01:28", label: "Fee Charging : Tuition Fee : 102,000", color: "#f59e0b" },
+    { date: "19-04", time: "01:28", label: "Fee Charging : Semester Fee : 11,500", color: "#f59e0b" },
+    { date: "12-07", time: "12:32", label: "Student Payment : Scholarship (Merit) 35% Of Tuition Fee 28,350", color: "#10b981" },
+    { date: "18-10", time: "02:51", label: "Student Payment : 81,000", color: "#10b981" },
+];
+
+
+const dataForGpa = [
+    { name: 'Fall 2023', gpa: 3.95 },
+    { name: 'Spring 2024', gpa: 3.98 },
+    { name: 'Fall 2024', gpa: 3.94 },
+];
+
 
 export const Dashboard = () => {
     return (
         <>
-            <Paper sx={{ width: '100%', p: 2 }}>
+            <Paper sx={{ width: '100%', p: 2, overflow: 'auto' }}>
                 {/* Sticky Heading */}
                 <Box
                     sx={{
@@ -253,7 +272,7 @@ export const Dashboard = () => {
                         sx={{
                             maxWidth: '100%',
                             backgroundColor: 'grey.200',
-                            borderRadius: 3,
+                            borderRadius: 2,
                             p: 4,
                             mb: 4,
                         }}
@@ -267,12 +286,12 @@ export const Dashboard = () => {
                                     fontWeight: 'bold',
                                     color: 'text.primary',
                                     letterSpacing: 1,
-                                    textAlign:'center'
+                                    textAlign: 'center'
                                 }}
                             >
                                 Overview
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 ,textAlign:'center'}}>
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, textAlign: 'center' }}>
                                 Spring 2025
                             </Typography>
                         </Box>
@@ -322,6 +341,124 @@ export const Dashboard = () => {
                             </Table>
                         </TableContainer>
                     </Box>
+
+
+                    {/* My Activity card */}
+                    <Box
+                        sx={{
+                            maxWidth: 400,
+                            borderRadius: 2,
+                            boxShadow: "0px 2px 12px rgba(0,0,0,0.05)",
+                            p: 2,
+                            backgroundColor: "white",
+                            mb: 10
+                        }}
+                    >
+                        {/* Header */}
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                            <Typography sx={{ fontWeight: "600", fontSize: "24px" }}>My Activity</Typography>
+                            <Button size="medium" variant="contained" sx={{ borderRadius: 2, textTransform: "none", backgroundColor: "#8b5cf6" }}>
+                                View
+                            </Button>
+                        </Box>
+
+                        {/* Activity List */}
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            {activityData.map((activity, index) => (
+                                <Box key={index} sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                                    {/* Dot */}
+                                    <Box
+                                        sx={{
+                                            width: 10,
+                                            height: 10,
+                                            borderRadius: "50%",
+                                            backgroundColor: activity.color,
+                                            mt: "6px",
+                                        }}
+                                    />
+                                    {/* Content */}
+                                    <Box>
+                                        <Typography sx={{ fontSize: "16px", color: "#6b7280" }}>
+                                            {activity.date} {activity.time}
+                                        </Typography>
+                                        <Typography sx={{ fontSize: "16px", color: "#111827" }}>{activity.label}</Typography>
+                                    </Box>
+                                </Box>
+                            ))}
+                        </Box>
+                    </Box>
+
+                    
+                    {/* Chart of GPA */}
+                    <Box
+                        sx={{
+                            width: '100%',
+                            maxWidth: 700,
+                            borderRadius: 3,
+                            boxShadow: "0px 4px 16px rgba(0,0,0,0.06)",
+                            p: 4,
+                            backgroundColor: "white",
+                            mb:10
+                        }}
+                    >
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                            <Typography sx={{ fontWeight: "600", fontSize: "24px" }}>My GPA</Typography>
+                            <Button size="medium" variant="contained" sx={{ borderRadius: 2, textTransform: "none", backgroundColor: "#8b5cf6" }}>
+                                View
+                            </Button>
+                        </Box>
+
+                        <ResponsiveContainer width="100%" height={500}>
+                            <LineChart
+                                data={dataForGpa}
+                                margin={{ top: 24, right: 50, left: 0, bottom: 0 }}
+                            >
+                                <defs>
+                                    <linearGradient id="gpaGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#facc15" stopOpacity={0.3} />
+                                        <stop offset="100%" stopColor="#facc15" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+
+                                <XAxis dataKey="name" tick={{ fontSize: 16 ,fontWeight: 'bold'}} padding={{ left: 30, right: 20 }}/>
+                                <YAxis
+                                    domain={[0, 4]}
+                                    ticks={[0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2, 3.6, 4.0]}
+                                    tick={{ fontSize: 16 , fontWeight: 'bold'}}
+                                />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: "#ffffff",
+                                        border: "1px solid #ccc",
+                                        borderRadius: 8,
+                                        fontSize: 16,
+                                    }}
+                                />
+                                <Line
+                                    type="monotone"
+                                    dataKey="gpa"
+                                    stroke="#facc15"
+                                    strokeWidth={4}
+                                    dot={{
+                                        r: 6,
+                                        stroke: "#facc15",
+                                        strokeWidth: 3,
+                                        fill: "#ffffff",
+                                    }}
+                                    activeDot={{
+                                        r: 8,
+                                        stroke: "#facc15",
+                                        strokeWidth: 3,
+                                        fill: "#ffffff",
+                                    }}
+                                    fill="url(#gpaGradient)"
+                                >
+                                    <LabelList dataKey="gpa" position="top" fill="#111827" fontSize={16} />
+                                </Line>
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </Box>
+
 
                 </Box>
 

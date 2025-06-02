@@ -10,6 +10,7 @@ import {
     Paper,
     Button,
 } from "@mui/material";
+import { Link } from "react-router";
 
 const ledgerData = [
     {
@@ -112,9 +113,11 @@ const FinancialLedgerCard = () => {
                             fontSize: "14px",
                         }}
                     >
-                        <Button size="medium" variant="contained" sx={{ borderRadius: 2, textTransform: "none", backgroundColor: "#8b5cf6" }}>
-                            View
-                        </Button>
+                        <Link to="finantial-ledger" style={{textDecoration:'none'}}>
+                            <Button size="medium" variant="contained" sx={{ borderRadius: 2, textTransform: "none", backgroundColor: "#8b5cf6" }}>
+                                View
+                            </Button>
+                        </Link>
                     </Box>
                 </Box>
             </Box>

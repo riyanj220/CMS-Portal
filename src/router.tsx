@@ -9,6 +9,7 @@ import Registration from "./components/Registration";
 import Fee from "./components/Fee";
 import Exam from "./components/Exam";
 import Profile from "./components/Profile";
+import FinantialLedgerDetail from "./components/dashboardComponents/FinantialLedgerDetail";
 
 
 
@@ -30,6 +31,8 @@ export const router = createBrowserRouter(
 
                 <Route path="general/:submenu/" element={<General/>} />
                 <Route path="exam/:submenu/" element={<Exam/>} />
+                
+                <Route path="finantial-ledger" element={<FinantialLedgerDetail/>}/>
             </Route>
         </>
     ),

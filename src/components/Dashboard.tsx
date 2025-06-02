@@ -54,11 +54,10 @@ const todoListData = (() => {
 export const Dashboard = () => {
     return (
         <>
-            <Paper sx={{ width: '100%', p: 2, overflow: 'auto' }}>
+            <Paper sx={{ width: '100%', p: 2, overflow: 'auto' ,fontFamily: "'Poppins', sans-serif"}}>
                 {/* Sticky Heading */}
                 <Box
                     sx={{
-                        fontFamily: "'Poppins', sans-serif",
                         position: 'sticky',
                         top: 0,
                         zIndex: 2,
@@ -281,6 +280,8 @@ export const Dashboard = () => {
                         </Box>
                     </Box>
 
+
+                    {/* Overview Card */}
                     <Box
                         sx={{
                             maxWidth: '100%',

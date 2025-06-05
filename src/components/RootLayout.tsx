@@ -11,7 +11,7 @@ export const RootLayout = () => {
     <>
       {!isLogin && (
         <Helmet>
-          <meta name="viewport" content="width=1920" />
+          <meta name="viewport" content="width=1440" />
         </Helmet>
       )}
 

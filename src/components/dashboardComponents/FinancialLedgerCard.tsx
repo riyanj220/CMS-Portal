@@ -74,7 +74,7 @@ const FinancialLedgerCard = () => {
         <Box
             sx={{
                 width: "100%",
-                maxWidth: '62%',
+                maxWidth: '100%',
                 p: 5,
                 borderRadius: 4,
                 backgroundColor: "#f9fafb",
@@ -91,7 +91,7 @@ const FinancialLedgerCard = () => {
                 }}
             >
                 <Box>
-                    <Typography sx={{ fontWeight: 700, fontSize: 28, mb: 2 }}>
+                    <Typography sx={{ fontWeight: "600", fontSize: "24px", mb: 2 }}>
                         Financial Ledger
                     </Typography>
                     <Typography sx={{ fontSize: 13, color: "gray", textAlign: "left" }}>

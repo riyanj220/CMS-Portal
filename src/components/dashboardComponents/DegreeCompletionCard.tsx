@@ -14,7 +14,7 @@ const DegreeCompletionCard = ({ progress = 0 }) => {
       }}
     >
       {/* Title */}
-      <Typography sx={{ fontWeight: 700, fontSize: 28, mb: 5 }}>
+      <Typography sx={{ fontWeight: "600", fontSize: "24px", mb: 5 }}>
         Degree Completion
       </Typography>
 

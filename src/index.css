@@ -62,15 +62,20 @@
     color: black;
   }
 } */
-html, body {
-  height: 100%; /* Ensure full height */
+html,
+body {
+  height: 100%;
+  /* Ensure full height */
   overflow: auto;
+
 }
 
 /* Apply to small devices and smaller than small devices */
 @media (min-width: 640px) {
-  html, body {
-    overflow-y: hidden; /* Prevent scrolling on smaller devices */
+  html,
+  body {
+    /* overflow-y: hidden; */
+    height: 100vh;
   }
 }
 
@@ -150,6 +155,7 @@ html, body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

@@ -35,12 +35,20 @@ const App = () => {
   }, [isMobile]);
 
   // Toggle submenus on click
-  const toggleSubMenu = (menu: MenuKeys) => {
-    setSubMenus((prev) => ({
-      ...prev,
-      [menu]: !prev[menu],
-    }));
-  };
+const toggleSubMenu = (menu: MenuKeys) => {
+  setSubMenus((prev) => {
+    const updated: typeof prev = {
+      general: false,
+      course: false,
+      registration: false,
+      fee: false,
+      exam: false,
+      profile: false,
+    };
+    updated[menu] = !prev[menu]; // Toggle only the clicked one
+    return updated;
+  });
+};
 
   // Menu items with potential submenus
   const Menus = [

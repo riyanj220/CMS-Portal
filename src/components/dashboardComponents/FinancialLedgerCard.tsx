@@ -73,7 +73,7 @@ const FinancialLedgerCard = () => {
     return (
         <Box
             sx={{
-                width: "100%",
+                width: "95%",
                 maxWidth: '100%',
                 p: 5,
                 borderRadius: 4,

@@ -17,9 +17,9 @@ export const Dashboard = () => {
                 {/* Sticky Heading */}
                 <Box
                     sx={{
-                        position: 'sticky',
-                        top: 0,
-                        zIndex: 2,
+                        // position: 'sticky',
+                        // top: 0,
+                        // zIndex: 2,
                         display: "flex",
                         alignItems: 'center',
                         justifyContent: 'space-between',

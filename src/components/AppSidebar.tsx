@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // MUI Icons
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { ChevronRightIcon, ChevronLeftIcon, ChevronDownIcon } from "lucide-react";
@@ -35,20 +35,25 @@ const App = () => {
   }, [isMobile]);
 
   // Toggle submenus on click
-const toggleSubMenu = (menu: MenuKeys) => {
-  setSubMenus((prev) => {
-    const updated: typeof prev = {
-      general: false,
-      course: false,
-      registration: false,
-      fee: false,
-      exam: false,
-      profile: false,
-    };
-    updated[menu] = !prev[menu]; // Toggle only the clicked one
-    return updated;
-  });
-};
+  const toggleSubMenu = (menu: MenuKeys) => {
+    setSubMenus((prev) => {
+      const updated: typeof prev = {
+        general: false,
+        course: false,
+        registration: false,
+        fee: false,
+        exam: false,
+        profile: false,
+      };
+      updated[menu] = !prev[menu]; // Toggle only the clicked one
+      return updated;
+    });
+  };
+
+  // const resetZoom = useCallback(() => {
+  //   document.documentElement.style.transform = "scale(1)"; // Reset zoom to 100%
+  //   document.documentElement.style.transformOrigin = "0 0"; // Set origin to top-left
+  // }, []);
 
   // Menu items with potential submenus
   const Menus = [
@@ -73,7 +78,7 @@ const toggleSubMenu = (menu: MenuKeys) => {
     },
     { title: "Profile", icon: <AccountBoxIcon />, key: "profile", path: "profile" },
   ];
-  
+
   return (
     <div className={`sticky top-0 h-screen overflow-y-auto ${open ? "w-60 flex flex-col  sm:w-72" : "w-16 sm:w-24 overflow-y-hidden"}`}>
       {/* Sidebar section */}
@@ -95,13 +100,14 @@ const toggleSubMenu = (menu: MenuKeys) => {
           {Menus.map((Menu, index) => (
             <li
               key={index}
-              className={`flex flex-col rounded-md py-3 px-4 cursor-pointer hover:text-white text-gray-200 hover:bg-indigo-800/50 transition-all ease-in-out duration-300 ${Menu.gap ? "mt-9" : "mt-2"} ${(index === 0 && location.pathname === "/dashboard/" || index===0 && location.pathname==="/dashboard") || (location.pathname.startsWith(`/dashboard/${Menu.path}`) && index !== 0) ? "bg-indigo-700/40" : ""
+              className={`flex flex-col rounded-md py-3 px-4 cursor-pointer hover:text-white text-gray-200 hover:bg-indigo-800/50 transition-all ease-in-out duration-300 ${Menu.gap ? "mt-9" : "mt-2"} ${(index === 0 && location.pathname === "/dashboard/" || index === 0 && location.pathname === "/dashboard") || (location.pathname.startsWith(`/dashboard/${Menu.path}`) && index !== 0) ? "bg-indigo-700/40" : ""
                 }`}
             >
               {/* Main Menu item - linkable if no submenu */}
               {!Menu.subMenu ? (
                 <Link to={`/dashboard/${Menu.path}`} className="flex items-center gap-2" onClick={() => {
                   // Close sidebar if it's mobile
+                  // resetZoom();
                   if (isMobile) {
                     setOpen(false);
                   }
@@ -139,6 +145,7 @@ const toggleSubMenu = (menu: MenuKeys) => {
                             to={`/dashboard/${Menu.path}/${subMenu.toLowerCase().replace(/ /g, "-")}`}
                             className="flex items-center gap-x-2 w-full"
                             onClick={() => {
+                              // resetZoom();
                               // Close sidebar if it's mobile
                               if (isMobile) {
                                 setOpen(false);

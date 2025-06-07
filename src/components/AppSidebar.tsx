@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 // MUI Icons
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { ChevronRightIcon, ChevronLeftIcon, ChevronDownIcon } from "lucide-react";
@@ -49,11 +49,6 @@ const App = () => {
       return updated;
     });
   };
-
-  // const resetZoom = useCallback(() => {
-  //   document.documentElement.style.transform = "scale(1)"; // Reset zoom to 100%
-  //   document.documentElement.style.transformOrigin = "0 0"; // Set origin to top-left
-  // }, []);
 
   // Menu items with potential submenus
   const Menus = [
@@ -107,7 +102,6 @@ const App = () => {
               {!Menu.subMenu ? (
                 <Link to={`/dashboard/${Menu.path}`} className="flex items-center gap-2" onClick={() => {
                   // Close sidebar if it's mobile
-                  // resetZoom();
                   if (isMobile) {
                     setOpen(false);
                   }
@@ -145,7 +139,6 @@ const App = () => {
                             to={`/dashboard/${Menu.path}/${subMenu.toLowerCase().replace(/ /g, "-")}`}
                             className="flex items-center gap-x-2 w-full"
                             onClick={() => {
-                              // resetZoom();
                               // Close sidebar if it's mobile
                               if (isMobile) {
                                 setOpen(false);

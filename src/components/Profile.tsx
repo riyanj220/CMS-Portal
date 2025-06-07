@@ -2,7 +2,6 @@ import { Button } from "@mui/material";
 import { useState } from "react";
 
 const Profile = () => {
-  // State to handle the form data
   const [guardianInfo, setGuardianInfo] = useState({
     guardianName: "Muhammad Jamil",
     cellNumber: "123456789011",
@@ -17,229 +16,134 @@ const Profile = () => {
     personalEmail: "riyanjamil220@gmail.com",
     officialEmail: "2023F-BSE-075@ssuet.edu.pk",
     cellNumber: "123456789011",
-    cnic: "42101-7905363-3",
+    cnic: "42111-111111-1",
   });
 
-  // Handle the onChange for form fields
   const handleGuardianChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setGuardianInfo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setGuardianInfo((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setAddressInfo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setAddressInfo((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <div className="max-w-8xl mx-auto p-5 bg-white rounded-lg shadow-md overflow-x-auto sm:p-7">
-      {/* Profile Title */}
-      <div className="flex justify-center text-center text-lg font-semibold text-gray-800 mb-4 sm:text-2xl md:text-3xl">
-        Student Profile | BS-Software Engineering-Morning
+    <div className="max-w-screen-xl mx-auto px-6 py-10">
+      {/* Header */}
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-800 mb-6">
+        Student Profile | BS-Software Engineering - Morning
+      </h1>
+      <hr className="mb-10 border-gray-300" />
+
+      {/* Basic Info */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-base text-gray-700 mb-12">
+        {[
+          { label: "Full Name", value: "RYAN JAMIL" },
+          { label: "Registration No", value: "2023F-BSE-075" },
+          { label: "Date Of Birth", value: "10-Nov-2004" },
+          { label: "Gender", value: "Male" },
+          { label: "NIC #", value: "42111-111111-1" },
+        ].map(({ label, value }) => (
+          <div className="flex justify-between bg-white p-4 shadow rounded-md" key={label}>
+            <span className="font-medium text-gray-600">{label}:</span>
+            <span className="font-semibold text-gray-800">{value}</span>
+          </div>
+        ))}
       </div>
 
-      {/* Divider Line */}
-      <hr className="border-t-2 border-gray-300 mb-6" />
-
-      {/* Profile Data */}
-      <div className="flex flex-wrap justify-center gap-3 md:gap-6">
-        {/* Row 1 */}
-        <div className="flex justify-between w-full sm:w-1/2 text-sm text-gray-700 md:text-lg">
-          <div>Full Name:</div>
-          <div className="font-semibold">RYAN JAMIL</div>
-        </div>
-
-        <div className="flex justify-between w-full sm:w-1/2 text-sm text-gray-700 md:text-lg">
-          <div>Registration No:</div>
-          <div className="font-semibold">2023F-BSE-075</div>
-        </div>
-
-        {/* Row 2 */}
-        <div className="flex justify-between w-full sm:w-1/2 text-sm text-gray-700 md:text-lg">
-          <div>Date Of Birth:</div>
-          <div className="font-semibold">25-Oct-2004</div>
-        </div>
-
-        <div className="flex justify-between w-full sm:w-1/2 text-sm text-gray-700 md:text-lg">
-          <div>Gender:</div>
-          <div className="font-semibold">Male</div>
-        </div>
-
-        {/* Row 3 */}
-        <div className="flex justify-between w-full sm:w-1/2 text-sm text-gray-700 md:text-lg">
-          <div>NIC #:</div>
-          <div className="font-semibold">42101-7905363-3</div>
-        </div>
-      </div>
-
-      {/* Flex container for the Guardian Information card and another card */}
-      <div className="flex flex-wrap gap-3 mt-10 md:flex-nowrap md:gap-6">
-        {/* Guardian Information Card */}
-        <div className="w-full sm:w-1/2 bg-white rounded-lg mb-6 md:p-6">
-          <div className="text-lg font-semibold text-gray-800 mb-4 text-center md:text-xl">Guardian Information</div>
-          <hr className="border-t-2 border-gray-300 mb-6" />
-
-          <div className="flex flex-wrap gap-3 justify-center md:gap-6">
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">Relation: *</label>
-              <select className="border border-gray-300 p-2 rounded-md mt-2">
+      {/* Details Section */}
+      <div className="grid md:grid-cols-2 gap-8">
+        {/* Guardian Info */}
+        <div className="bg-white shadow-lg rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">Guardian Information</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-700">Relation:</label>
+              <select className="w-full border rounded-md p-2">
                 <option>Father</option>
                 <option>Mother</option>
                 <option>Guardian</option>
               </select>
             </div>
 
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">Guardian Name: *</label>
-              <input
-                type="text"
-                name="guardianName"
-                className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter Name"
-                value={guardianInfo.guardianName}
-                onChange={handleGuardianChange}
-              />
-            </div>
+            {[
+              { name: "guardianName", label: "Guardian Name", type: "text" },
+              { name: "cellNumber", label: "Cell #", type: "text" },
+              { name: "cnic", label: "CNIC/NICOP/NTN #", type: "text" },
+              { name: "occupation", label: "Occupation", type: "text" },
+              { name: "email", label: "Email", type: "email" },
+            ].map(({ name, label, type }) => (
+              <div key={name}>
+                <label className="block mb-1 text-sm font-medium text-gray-700">{label}:</label>
+                <input
+                  type={type}
+                  name={name}
+                  value={guardianInfo[name as keyof typeof guardianInfo]}
+                  onChange={handleGuardianChange}
+                  className="w-full border rounded-md p-2"
+                  placeholder={`Enter ${label}`}
+                />
+              </div>
+            ))}
 
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">Cell #: *</label>
-              <input
-                type="text"
-                name="cellNumber"
-                className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter Cell Number"
-                value={guardianInfo.cellNumber}
-                onChange={handleGuardianChange}
-              />
-            </div>
-
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">CNIC/NICOP/NTN #: *</label>
-              <input
-                type="text"
-                name="cnic"
-                className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter CNIC/NICOP/NTN #"
-                value={guardianInfo.cnic}
-                onChange={handleGuardianChange}
-              />
-            </div>
-
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">Occupation: *</label>
-              <input
-                type="text"
-                name="occupation"
-                className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter Occupation"
-                value={guardianInfo.occupation}
-                onChange={handleGuardianChange}
-              />
-            </div>
-
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">Email: *</label>
-              <input
-                type="email"
-                name="email"
-                className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter Guardian Email"
-                value={guardianInfo.email}
-                onChange={handleGuardianChange}
-              />
-            </div>
-
-            <div className="w-full flex justify-center mt-6">
-              <Button size="large" variant="contained">Save</Button>
+            <div className="text-center pt-4">
+              <Button variant="contained" size="large">Save</Button>
             </div>
           </div>
         </div>
 
-        {/* Second Card: Residential Address & Personal Information */}
-        <div className="w-full sm:w-1/2 bg-white rounded-lg mb-6 md:p-6">
-          <div className="text-lg font-semibold text-gray-800 mb-4 text-center md:text-xl">Residential Address</div>
-          <hr className="border-t-2 border-gray-300 mb-6" />
-
-          <div className="flex flex-wrap gap-3 md:gap-6">
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">Permanent Address: *</label>
+        {/* Address & Personal Info */}
+        <div className="bg-white shadow-lg rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">Residential Address</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-700">Permanent Address:</label>
               <input
                 type="text"
-                className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter your Permanent Address"
+                name="permanentAddress"
                 value={addressInfo.permanentAddress}
                 onChange={handleAddressChange}
+                className="w-full border rounded-md p-2"
               />
             </div>
 
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">Present Address: *</label>
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-700">Present Address:</label>
               <input
                 type="text"
-                className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter your Present Address"
+                name="presentAddress"
                 value={addressInfo.presentAddress}
                 onChange={handleAddressChange}
+                className="w-full border rounded-md p-2"
               />
             </div>
           </div>
 
-          <div className="text-lg font-semibold text-gray-800 mb-4 mt-8 text-center md:text-xl">Personal Information</div>
-          <hr className="border-t-2 border-gray-300 mb-6" />
+          <h2 className="text-xl font-semibold text-center text-gray-800 mt-8 mb-4">Personal Information</h2>
+          <div className="space-y-4">
+            {[
+              { name: "cellNumber", label: "Cell #", type: "text" },
+              { name: "personalEmail", label: "Personal Email", type: "email" },
+              { name: "officialEmail", label: "Official Email", type: "email", disabled: true },
+              { name: "cnic", label: "CNIC #", type: "text" },
+            ].map(({ name, label, type, disabled }) => (
+              <div key={name}>
+                <label className="block mb-1 text-sm font-medium text-gray-700">{label}:</label>
+                <input
+                  type={type}
+                  name={name}
+                  value={addressInfo[name as keyof typeof addressInfo]}
+                  onChange={handleAddressChange}
+                  className="w-full border rounded-md p-2"
+                  disabled={disabled}
+                />
+              </div>
+            ))}
 
-          <div className="flex flex-wrap gap-3 md:gap-6">
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">Cell #: *</label>
-              <input
-                type="text"
-                className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter Cell Number"
-                value={addressInfo.cellNumber}
-                onChange={handleAddressChange}
-              />
-            </div>
-
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">Personal Email: *</label>
-              <input
-                type="email"
-                className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter Personal Email"
-                value={addressInfo.personalEmail}
-                onChange={handleAddressChange}
-              />
-            </div>
-
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">Official Email: *</label>
-              <input
-                type="email"
-                value={addressInfo.officialEmail}
-                disabled
-                className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter Official Email"
-              />
-            </div>
-
-            <div className="flex flex-col w-full sm:w-1/2">
-              <label className="text-sm text-gray-700 md:text-lg">CNIC #: *</label>
-              <input
-                type="text"
-                className="border border-gray-300 p-2 rounded-md mt-2"
-                placeholder="Please enter CNIC Number"
-                value={addressInfo.cnic}
-                onChange={handleAddressChange}
-              />
-            </div>
-
-            <div className="w-full flex justify-center mt-6">
-              <Button size="large" variant="contained">Save</Button>
+            <div className="text-center pt-4">
+              <Button variant="contained" size="large">Save</Button>
             </div>
           </div>
         </div>

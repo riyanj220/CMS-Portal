@@ -144,6 +144,8 @@ const App = () => {
                                 setOpen(false);
                               }
                             }}
+                            target={subMenu === "Print admit card" ? "_blank" :undefined}
+
                           >
                             <span className="text-gray-300">
                               <ChevronRightIcon className="text-xs" />

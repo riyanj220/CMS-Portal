@@ -78,6 +78,34 @@ body {
   }
 }
 
+@media print {
+  html, body, #root {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .h-screen, .flex-1, .overflow-hidden, .overflow-y-auto, .relative {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  /* Optional: force admit card container to page-break naturally */
+  .admit-card-print-container {
+    page-break-inside: avoid;
+    page-break-after: auto;
+    /* Remove fixed height/margins if set */
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

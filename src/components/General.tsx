@@ -1,5 +1,6 @@
 import Announcement from "@/pages/Announcement";
 import Attendance from "@/pages/Attendance";
+import { OnlineSurvey } from "@/pages/OnlineSurvey";
 import TimeTable from "@/pages/TimeTable";
 import TodoList from "@/pages/TodoList";
 import { useParams } from "react-router";
@@ -18,6 +19,8 @@ const General = () => {
         return <Attendance />;
       case "announcements":
         return <Announcement />;
+      case "online-survey":
+        return <OnlineSurvey/>
     }
   };
 

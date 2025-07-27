@@ -57,7 +57,7 @@ const App = () => {
       title: "General",
       icon: <MenuIcon />,
       gap: true,
-      subMenu: ["Time table", "Todo list", "Attendance", "Announcements"],
+      subMenu: ["Time table", "Todo list","Online Survey" ,"Attendance", "Announcements"],
       key: "general",
       path: "general",
     },

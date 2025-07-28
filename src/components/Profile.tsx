@@ -45,18 +45,31 @@ const Profile = () => {
           { label: "Date Of Birth", value: "10-Nov-2004" },
           { label: "Gender", value: "Male" },
           { label: "NIC #", value: "42111-111111-1" },
-        ].map(({ label, value }) => (
-          <div className="flex justify-between bg-white p-4 shadow rounded-md" key={label}>
-            <span className="font-medium text-gray-600">{label}:</span>
-            <span className="font-semibold text-gray-800">{value}</span>
-          </div>
-        ))}
+        ].map(({ label, value }) =>
+          label === "NIC #" ? (
+            <div
+              key={label}
+              className="bg-white p-4 shadow rounded-md flex items-center justify-center col-span-1 sm:col-span-2"
+            >
+              <span className="font-medium text-gray-600 mb-1">{label}:</span>
+              <span className="font-semibold text-gray-800">{value}</span>
+            </div>
+          ) : (
+            <div
+              key={label}
+              className="flex justify-between bg-white p-4 shadow rounded-md"
+            >
+              <span className="font-medium text-gray-600">{label}:</span>
+              <span className="font-semibold text-gray-800">{value}</span>
+            </div>
+          )
+        )}
       </div>
 
       {/* Details Section */}
       <div className="grid md:grid-cols-2 gap-8">
         {/* Guardian Info */}
-        <div className="bg-white shadow-lg rounded-lg p-6">
+        <div className="bg-white shadow-lg rounded-lg p-6 h-[92%]">
           <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">Guardian Information</h2>
           <div className="space-y-4">
             <div>
@@ -95,7 +108,7 @@ const Profile = () => {
         </div>
 
         {/* Address & Personal Info */}
-        <div className="bg-white shadow-lg rounded-lg p-6">
+        <div className="bg-white shadow-lg rounded-lg p-6 mb-15">
           <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">Residential Address</h2>
           <div className="space-y-4">
             <div>

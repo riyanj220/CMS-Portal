@@ -1,9 +1,10 @@
-import { Box, Button, FormControl, FormControlLabel,Paper, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material"
+import { Box, Button, FormControl, FormControlLabel, Paper, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material"
 import { useState } from "react";
 import SurveySuccessModal from "./SurveySuccessModal";
+import { useParams } from "react-router";
 
 
-const QUESTIONS = [
+const COURSE_QUESTIONS = [
     "The course workload was manageable?",
     "Learning materials (lesson plans, course notes etc.) were relevant, useful and timely available?",
     "Course was completed according to the schedule?",
@@ -18,6 +19,22 @@ const QUESTIONS = [
     "Were you satisfied with the visual aid equipment used in the class?",
 ];
 
+const TEACHER_QUESTIONS = [
+    "The instructor is prepared for each class?",
+    "Demonstrates current knowledge of the subject?",
+    "Lecture presentation was conceptual and relevant?",
+    "Punctuality in the class?",
+    "Took interest in teaching the course?",
+    "Complete the course as per teaching plan?",
+    "Teacher helped in gaining knowledge of the subject?",
+    "Delivered lecture in English?",
+    "Provide guidance after the class?",
+    "The instructor is fair in examination?",
+    "Were the recommended reading books relevant and useful?",
+    "Did the learning and teaching methods encourage student participation?",
+    "Was the overall environment in the class conducive to learning?",
+];
+
 const OPTIONS = ["A", "B", "C", "D", "E"];
 
 const user = {
@@ -28,7 +45,19 @@ const user = {
 };
 
 
-export const CourseSurvey = () => {
+export const SurveyQuestions = () => {
+    const { type } = useParams();
+
+    const QUESTIONS =
+        type === "course" ? COURSE_QUESTIONS :
+            type === "teacher" ? TEACHER_QUESTIONS :
+                [];
+
+    const surveyTitle =
+        type === "course" ? "Course Evaluation" :
+            type === "teacher" ? "Teacher Evaluation" :
+                "Survey";
+
     const [answers, setAnswers] = useState(Array(QUESTIONS.length).fill(""));
     const [comment, setComment] = useState("");
     const [openModal, setOpenModal] = useState(false);
@@ -55,7 +84,8 @@ export const CourseSurvey = () => {
                 borderRadius: 3,
                 mb: 10,
             }}
-        >
+        >   
+            {/* Title */}
             <Box
                 sx={{
                     position: "sticky",
@@ -70,7 +100,7 @@ export const CourseSurvey = () => {
                     variant="h4"
                     sx={{ fontWeight: 700, color: "#232e3c", letterSpacing: 1, mb: 1 }}
                 >
-                    Course Evaluation
+                    {surveyTitle}
                 </Typography>
             </Box>
 

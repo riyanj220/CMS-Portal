@@ -10,8 +10,7 @@ import Fee from "./components/Fee";
 import Exam from "./components/Exam";
 import Profile from "./components/Profile";
 import FinantialLedgerDetail from "./components/dashboardComponents/FinantialLedgerDetail";
-import { TeacherSurvey } from "./pages/Online_survey_pages/TeacherSurvey";
-import { CourseSurvey } from "./pages/Online_survey_pages/CourseSurvey";
+import {SurveyQuestions } from "./pages/Online_survey_pages/SurveyQuestions";
 
 
 
@@ -32,8 +31,7 @@ export const router = createBrowserRouter(
                 <Route path="profile" element={<Profile />} />
 
                 <Route path="general/:submenu/" element={<General />} />
-                <Route path="general/online-survey/course/:id" element={<CourseSurvey />} />
-                <Route path="general/online-survey/teacher/:id" element={<TeacherSurvey />} />
+                <Route path="general/online-survey/:type/:id" element={<SurveyQuestions />} />
 
                 <Route path="exam/:submenu/" element={<Exam />} />
 

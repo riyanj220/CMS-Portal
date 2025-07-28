@@ -63,6 +63,7 @@ export default function SurveySuccessModal({ open, user }: SurveySuccessModalPro
                     >
                         Survey Submitted
                     </Typography>
+                    
                     <Typography
                         sx={{
                             fontWeight: 400,
@@ -98,18 +99,6 @@ export default function SurveySuccessModal({ open, user }: SurveySuccessModalPro
                             </Typography>
                         </Stack>
                     </Stack>
-
-                    {/* <Typography
-                        sx={{
-                            color: "#1976d2",
-                            mt: 1,
-                            fontWeight: 500,
-                            fontSize: 17,
-                            letterSpacing: 0.1,
-                        }}
-                    >
-                        You may now proceed back to the portal.
-                    </Typography> */}
 
                     {/* Add divider before the button for separation */}
                     <Divider sx={{ width: "80%", my: 2, borderColor: "#e0e8ef" }} />

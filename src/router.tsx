@@ -10,8 +10,8 @@ import Fee from "./components/Fee";
 import Exam from "./components/Exam";
 import Profile from "./components/Profile";
 import FinantialLedgerDetail from "./components/dashboardComponents/FinantialLedgerDetail";
-import { TeacherSurvey } from "./pages/TeacherSurvey";
-import { CourseSurvey } from "./pages/CourseSurvey";
+import { TeacherSurvey } from "./pages/Online_survey_pages/TeacherSurvey";
+import { CourseSurvey } from "./pages/Online_survey_pages/CourseSurvey";
 
 
 

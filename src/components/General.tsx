@@ -1,6 +1,6 @@
 import Announcement from "@/pages/Announcement";
 import Attendance from "@/pages/Attendance";
-import { OnlineSurvey } from "@/pages/OnlineSurvey";
+import { OnlineSurvey } from "@/pages/Online_survey_pages/OnlineSurvey";
 import TimeTable from "@/pages/TimeTable";
 import TodoList from "@/pages/TodoList";
 import { useParams } from "react-router";

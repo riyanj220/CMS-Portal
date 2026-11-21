@@ -1,64 +1,81 @@
-import { Box, Typography, CircularProgress } from "@mui/material";
+import SchoolIcon from "@mui/icons-material/School";
 
-const DegreeCompletionCard = ({ progress = 0 }) => {
+interface DegreeCompletionProps {
+  progress?: number;
+}
+
+const DegreeCompletionCard: React.FC<DegreeCompletionProps> = ({ progress = 55 }) => {
+  const strokeWidth = 10;
+  const radius = 64;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
   return (
-    <Box
-      sx={{
-        width: "100%",
-        maxWidth: 500,
-        p: 5,
-        borderRadius: 4,
-        backgroundColor: "#f9fafb",
-        textAlign: "center",
-        mb: 5,
-      }}
-    >
-      {/* Title */}
-      <Typography sx={{ fontWeight: "600", fontSize: "24px", mb: 5 }}>
-        Degree Completion
-      </Typography>
+    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between h-full">
+      {/* Header */}
+      <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div>
+          <h2 className="text-base sm:text-lg font-bold text-slate-800">Degree Progress</h2>
+          <p className="text-xs text-slate-500 mt-0.5">BS Software Engineering Curriculum</p>
+        </div>
+        <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+          <SchoolIcon className="w-4 h-4" />
+        </div>
+      </div>
 
-      {/* Circular Progress */}
-      <Box
-        sx={{
-          position: "relative",
-          display: "inline-flex",
-          justifyContent: "center",
-          alignItems: "center",
-          mb: 5,
-        }}
-      >
-        <CircularProgress
-          variant="determinate"
-          value={progress}
-          size={180}
-          thickness={6}
-          sx={{
-            color: "#99f6e4", // slightly brighter turquoise
-          }}
-        />
-        <Box
-          sx={{
-            position: "absolute",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            sx={{ fontWeight: 800, fontSize: 40, color: "#334155" }}
-          >
-            {`${progress}%`}
-          </Typography>
-        </Box>
-      </Box>
+      {/* Circular Progress Gauge */}
+      <div className="flex flex-col items-center justify-center py-4">
+        <div className="relative flex items-center justify-center">
+          <svg className="w-36 h-36 transform -rotate-90">
+            {/* Background Circle */}
+            <circle
+              cx="72"
+              cy="72"
+              r={radius}
+              stroke="currentColor"
+              strokeWidth={strokeWidth}
+              className="text-slate-100"
+              fill="transparent"
+            />
+            {/* Progress Circle */}
+            <circle
+              cx="72"
+              cy="72"
+              r={radius}
+              stroke="currentColor"
+              strokeWidth={strokeWidth}
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+              className="text-indigo-600 transition-all duration-1000 ease-out"
+              fill="transparent"
+            />
+          </svg>
 
-      {/* Description */}
-      <Typography sx={{ fontSize: 18, color: "#475569", px: 2, lineHeight: 1.8 }}>
-        Roadmaps are meant to be a guide for students and academic advisors in
-        planning a path to a degree.
-      </Typography>
-    </Box>
+          {/* Center Content */}
+          <div className="absolute flex flex-col items-center">
+            <span className="text-3xl font-extrabold text-slate-900 tracking-tight">{progress}%</span>
+            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Completed</span>
+          </div>
+        </div>
+
+        {/* Milestone Breakdown */}
+        <div className="grid grid-cols-2 gap-3 w-full mt-4 text-center">
+          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+            <p className="text-[11px] text-slate-400 font-medium">Credits Earned</p>
+            <p className="text-sm font-bold text-slate-800 mt-0.5">74 / 134 Cr</p>
+          </div>
+          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+            <p className="text-[11px] text-slate-400 font-medium">Current Semester</p>
+            <p className="text-sm font-bold text-indigo-600 mt-0.5">4th of 8</p>
+          </div>
+        </div>
+
+        <p className="text-[11px] text-slate-400 text-center mt-3 leading-relaxed">
+          Roadmap tracks mandatory degree requirements according to HEC and SSUET accreditation standards.
+        </p>
+      </div>
+    </div>
   );
 };
 

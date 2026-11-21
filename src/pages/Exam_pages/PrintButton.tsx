@@ -1,45 +1,58 @@
-import { RefObject, useState } from "react";
-import { Box, Button, Snackbar } from "@mui/material";
+import React from "react";
+import { Button } from "@mui/material";
 import { useReactToPrint } from "react-to-print";
+import PrintIcon from "@mui/icons-material/Print";
 
 interface PrintButtonProps {
-  printRef: RefObject<HTMLElement | null>;
+  printRef: React.RefObject<HTMLElement | null>;
   className?: string;
+  title?: string;
 }
 
-
-export const PrintButton: React.FC<PrintButtonProps> = ({ printRef, className  }) => {
-  const [open, setOpen] = useState(false);
-
+export const PrintButton: React.FC<PrintButtonProps> = ({
+  printRef,
+  className = "",
+  title = "Print / Save as PDF",
+}) => {
   const handlePrint = useReactToPrint({
     contentRef: printRef,
-    documentTitle: "Admit Card",
-    onBeforePrint: async () => { setOpen(true); },
-    onAfterPrint: () => setOpen(false),
+    documentTitle: "Admit_Card_2023F-BSE-075",
+    pageStyle: `
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+      @media print {
+        body {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    `,
   });
 
   return (
-    <>
-      <Box sx={{display:"flex" ,justifyContent:"center"}} >
-
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ mb: 2 }}
-          onClick={handlePrint}
-          className={className} 
-        >
-          Print Admit Card
-        </Button>
-        <Snackbar
-          open={open}
-          autoHideDuration={3000}
-          onClose={() => setOpen(false)}
-          message="Tip: Set Margins: None & disable Headers/Footers for best results."
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        />
-      </Box>
-
-    </>
+    <Button
+      variant="contained"
+      color="primary"
+      startIcon={<PrintIcon />}
+      onClick={() => handlePrint()}
+      className={className}
+      sx={{
+        textTransform: "none",
+        fontWeight: 600,
+        borderRadius: 2,
+        px: 2.5,
+        py: 1,
+        backgroundColor: "#4f46e5",
+        "&:hover": {
+          backgroundColor: "#4338ca",
+        },
+      }}
+    >
+      {title}
+    </Button>
   );
 };
+
+export default PrintButton;

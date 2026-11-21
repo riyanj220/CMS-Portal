@@ -1,33 +1,39 @@
 import { Outlet, useLocation } from "react-router";
-import { Helmet } from "react-helmet";
 import AppBarComponent from "./AppBarComponent";
 import AppSidebar from "./AppSidebar";
+import { LayoutProvider } from "../context/LayoutContext";
 
-export const RootLayout = () => {
+const LayoutContent = () => {
   const location = useLocation();
   const isLogin = location.pathname === "/login";
-   const isPrintAdmitCardPage = location.pathname === "/dashboard/exam/print-admit-card";
-   console.log(isPrintAdmitCardPage);
+
+  if (isLogin) {
+    return <Outlet />;
+  }
 
   return (
-    <>
-      {!isLogin && !isPrintAdmitCardPage &&(
-        <Helmet>
-          <meta name="viewport" content="width=1440" />
-        </Helmet>
-      )}
+    <div className="h-screen flex flex-col bg-slate-50 text-slate-800 antialiased overflow-hidden">
+      <div className="no-print shrink-0">
+        <AppBarComponent />
+      </div>
 
-      <div className="h-screen flex flex-col">
-        {!isLogin && !isPrintAdmitCardPage && <AppBarComponent />}
+      <div className="flex flex-1 overflow-hidden relative">
+        <AppSidebar />
 
-        <div className="flex flex-1 overflow-hidden relative">
-          {!isLogin && !isPrintAdmitCardPage && <AppSidebar />}
-
-          <div className="flex-1 h-screen overflow-y-auto p-2 sm:p-5 bg-gray-100">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-5 lg:p-6 bg-slate-100/90 transition-all">
+          <div className="max-w-[1600px] mx-auto w-full">
             <Outlet />
           </div>
-        </div>
+        </main>
       </div>
-    </>
+    </div>
+  );
+};
+
+export const RootLayout = () => {
+  return (
+    <LayoutProvider>
+      <LayoutContent />
+    </LayoutProvider>
   );
 };

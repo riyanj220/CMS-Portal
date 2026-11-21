@@ -1,559 +1,446 @@
-import { useState } from 'react';
-import { Box, Button, FormControl, InputLabel, Select, MenuItem, Paper, SelectChangeEvent, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
-import html2canvas from 'html2canvas-pro';
-import { jsPDF } from 'jspdf';
+import { useState, useRef } from "react";
+import { Link } from "react-router";
+import html2canvas from "html2canvas-pro";
+import { jsPDF } from "jspdf";
+import PrintIcon from "@mui/icons-material/Print";
+import DownloadIcon from "@mui/icons-material/Download";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-declare global {
-  interface Window {
-    html2canvas: typeof html2canvas;
-  }
+interface CourseGrade {
+  code: string;
+  title: string;
+  crHours: number;
+  marks: number;
+  grade: string;
+  gps: number;
 }
-window.html2canvas = html2canvas;
+
+const sem1Courses: CourseGrade[] = [
+  { code: "HS101", title: "Islamic Studies", crHours: 2, marks: 93, grade: "A", gps: 4.0 },
+  { code: "HS102T", title: "Functional English", crHours: 3, marks: 95, grade: "A", gps: 4.0 },
+  { code: "MS108T", title: "Linear Algebra", crHours: 3, marks: 88, grade: "A", gps: 4.0 },
+  { code: "SE102L", title: "Programming Fundamentals Lab", crHours: 1, marks: 46, grade: "A", gps: 4.0 },
+  { code: "SE102T", title: "Programming Fundamentals", crHours: 3, marks: 91, grade: "A", gps: 4.0 },
+  { code: "SE105L", title: "Introduction to Computing Lab", crHours: 1, marks: 45, grade: "A", gps: 4.0 },
+  { code: "SE105T", title: "Introduction to Computing", crHours: 2, marks: 83, grade: "A-", gps: 3.7 },
+];
+
+const sem2Courses: CourseGrade[] = [
+  { code: "CS201T", title: "Object Oriented Programming", crHours: 3, marks: 92, grade: "A", gps: 4.0 },
+  { code: "CS201L", title: "Object Oriented Programming Lab", crHours: 1, marks: 48, grade: "A", gps: 4.0 },
+  { code: "MS202T", title: "Multivariable Calculus", crHours: 3, marks: 89, grade: "A", gps: 4.0 },
+  { code: "SE201T", title: "Software Requirement Engineering", crHours: 3, marks: 94, grade: "A", gps: 4.0 },
+  { code: "HS201T", title: "Pakistan Studies", crHours: 2, marks: 87, grade: "A", gps: 4.0 },
+  { code: "EE201T", title: "Basic Electronics", crHours: 3, marks: 85, grade: "A", gps: 4.0 },
+  { code: "EE201L", title: "Basic Electronics Lab", crHours: 1, marks: 44, grade: "A-", gps: 3.7 },
+];
+
+const semesterWiseSummary = [
+  { sr: 1, semester: "1st Semester (Fall 2023)", totalCr: 15, earnedCr: 15, earnedGp: 59.3, gpa: 3.95, cgpa: "3.95", passed: 7 },
+  { sr: 2, semester: "2nd Semester (Spring 2024)", totalCr: 16, earnedCr: 16, earnedGp: 63.6, gpa: 3.98, cgpa: "3.96", passed: 7 },
+  { sr: 3, semester: "3rd Semester (Fall 2024)", totalCr: 17, earnedCr: 17, earnedGp: 67.5, gpa: 3.97, cgpa: "3.97", passed: 7 },
+];
+
+const gradeInterpretations = [
+  { grade: "F/R", meaning: "Failed course replaced with another approved course." },
+  { grade: "NC", meaning: "Non-credit course; not counted towards CGPA calculation." },
+  { grade: "S", meaning: "Satisfactory completion. Counted for credit, neutral in CGPA." },
+  { grade: "I", meaning: "Incomplete. To be replaced by grade earned within prescribed period." },
+  { grade: "W", meaning: "Officially Withdrawn from course prior to deadline." },
+  { grade: "U", meaning: "Unsatisfactory. No credit awarded, does not affect CGPA." },
+];
+
+const gradingScale = [
+  { marks: "85 - 100", gpa: "4.00", grade: "A", remarks: "Outstanding" },
+  { marks: "80 - 84", gpa: "3.70", grade: "A-", remarks: "Excellent" },
+  { marks: "75 - 79", gpa: "3.30", grade: "B+", remarks: "Very Good" },
+  { marks: "70 - 74", gpa: "3.00", grade: "B", remarks: "Good" },
+  { marks: "65 - 69", gpa: "2.70", grade: "B-", remarks: "Average" },
+  { marks: "60 - 64", gpa: "2.30", grade: "C+", remarks: "Below Average" },
+  { marks: "50 - 59", gpa: "2.00", grade: "C", remarks: "Pass / Minimum" },
+  { marks: "Below 50", gpa: "0.00", grade: "F", remarks: "Fail" },
+];
 
 export const PrintTranscript = () => {
-  const [page, setPage] = useState("front");
-
-  const handlePageChange = (event: SelectChangeEvent) => {
-    setPage(event.target.value);
-  };
-
-  function createData(
-    code: string,
-    title: string,
-    crHours: number,
-    marks: number,
-    grade: string,
-    gps: number
-  ) {
-    return { code, title, crHours, marks, grade, gps };
-  }
-
-  const rows = [
-    createData('HS101', 'ISLAMIC STUDIES', 2, 93, 'A', 4),
-    createData('HS102T', 'FUNCTIONAL ENGLISH', 3, 99, 'A', 4),
-    createData('MS108T', 'LINEAR ALGEBRA	', 3, 88, 'A', 4),
-    createData('SE102L', 'PROGRAMMING FUNDAMENTALS', 1, 46, 'A', 4),
-    createData('SE102T', 'PROGRAMMING FUNDAMENTALS', 3, 91, 'A', 4),
-    createData('SE105L', 'INTRODUCTION TO COMPUTING', 1, 45, 'A', 4),
-    createData('SE105T', 'INTRODUCTION TO COMPUTING', 2, 83, 'A', 4),
-  ];
-
-  function createDataForMarksTable(
-    maxMarks: number,
-    marksObtained: number,
-  ) {
-    return { maxMarks, marksObtained };
-  }
-
-  const rowsForMarksTable = [
-    createDataForMarksTable(1850.00, 1667.00),
-  ];
-
-  function createDataForSemesterWiseTable(
-    srNo: number,
-    semester: string,
-    totalCrHours: number,
-    earnedCrHours: number,
-    earnedGp: number,
-    earnedGpa: number,
-    CGPA: string,
-    numberOfCoursesPassed: number
-  ) {
-    return { srNo, semester, totalCrHours, earnedCrHours, earnedGp, earnedGpa, CGPA, numberOfCoursesPassed }
-  }
-
-  const rowsForSemesterWiseTable = [
-    createDataForSemesterWiseTable(1, '1st Semester', 15, 15, 59.32, 3.95, '', 7),
-    createDataForSemesterWiseTable(2, '2nd Semester', 17, 17, 67.66, 3.98, "3.96", 8),
-    createDataForSemesterWiseTable(3, '3rd Semester', 17, 17, 66.98, 3.95, '', 7),
-  ]
-
-  function createDataForTranscriptBackSideGradeInterpretation(
-    grade: string,
-    interpretation: string,
-  ) {
-    return { grade, interpretation };
-  }
-
-  const rowsForTranscriptBackSideGradeInterpretation = [
-    createDataForTranscriptBackSideGradeInterpretation('F/R', 'Failed course replaced with another one.'),
-    createDataForTranscriptBackSideGradeInterpretation('NC', 'Non-credit course and not included in the calculation of CGPA.'),
-    createDataForTranscriptBackSideGradeInterpretation('S', 'Satisfactory, S is counted towards credits but not used in the calculation of CGPA.'),
-    createDataForTranscriptBackSideGradeInterpretation('I', 'Incomplete, to be replaced by the grade earned later on.'),
-    createDataForTranscriptBackSideGradeInterpretation('W', 'Withdrawn'),
-    createDataForTranscriptBackSideGradeInterpretation('U', 'Unsatisfactory, U is neither counted towards credits not used in the calculation of CGPA.'),
-
-  ]
-
-  const createDataForTranscriptBackSideShortForms = (shortform: string, interpretation: string) => {
-    return { shortform, interpretation }
-  };
-
-  const rowsForTranscriptBackSideShortForms = [
-    createDataForTranscriptBackSideShortForms('SGPA', 'Semester Grade Point Average.'),
-    createDataForTranscriptBackSideShortForms('CGPA', '	Cumulative Grade Point Average.'),
-    createDataForTranscriptBackSideShortForms('R-n', 'Repeat count -n, n is the number of times a course is repeated.Points from the most recent attempt are used in the calculation of CGPA.'),
-    createDataForTranscriptBackSideShortForms('Rp-n', '	Replacement n, Rp-n appears in Remarks in front of two courses (course1 taken prior to course 2) representing that course 1 is replace by course 2.')
-  ];
-
+  const [activeTab, setActiveTab] = useState<"front" | "back">("front");
+  const [downloading, setDownloading] = useState(false);
+  const transcriptRef = useRef<HTMLDivElement>(null);
+  const baseUrl = import.meta.env.BASE_URL;
 
   const handleDownloadPDF = async () => {
-    // Determine which section to download
-    const sectionId = page === 'front' ? 'transcript-front' : 'transcript-back';
-    const element = document.getElementById(sectionId);
+    if (!transcriptRef.current) return;
+    setDownloading(true);
 
-    if (!element) {
-      console.warn("Transcript section not found.");
-      return;
+    try {
+      const element = transcriptRef.current;
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        windowWidth: 1024,
+      });
+
+      const imgData = canvas.toDataURL("image/jpeg", 0.95);
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`SSUET_Transcript_${activeTab}_2023F-BSE-075.pdf`);
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+    } finally {
+      setDownloading(false);
     }
+  };
 
-    // Initialize jsPDF instance
-    const pdf = new jsPDF('p', 'mm', 'a4');
-
-    // For the backside page, add the heading as a separate element at the top
-    if (page === 'back') {
-      const headingElement = document.getElementById('transcript-back-heading');
-      if (headingElement) {
-        // Get the text of the heading
-        const headingText = headingElement.innerText;
-
-        // Calculate the width of the heading text
-        const textWidth = pdf.getTextWidth(headingText); // Get the width of the text
-
-        // Calculate the x-position to center the heading
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const xPos = (pdfWidth - textWidth) / 2; // Center the text horizontally
-
-        // Set the font size and style (optional, can be customized)
-        pdf.setFontSize(16); // Set font size for the heading
-        pdf.setFont("times"); // Set font family for the heading (optional)
-
-        // Add the heading text to the PDF at the calculated x position
-        pdf.text(headingText, xPos, 20); // y position 20
-      }
-    }
-
-    // Create a canvas from the selected element
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: "#ffffff"
-    });
-
-    // Convert canvas to image data
-    const imgData = canvas.toDataURL('image/jpeg', 1.0);
-
-    // Get image properties
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-
-    // Calculate pdf height while maintaining aspect ratio
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-    // Set padding values (adjust as needed)
-    const padding = 10;  // 10mm padding from the top and left
-    const xPos = padding;
-    const yPos = 30; // Adjust to ensure the heading doesn't overlap with the content
-
-    // Add the image to the PDF with padding applied
-    pdf.addImage(imgData, 'JPEG', xPos, yPos, pdfWidth - 2 * padding, pdfHeight - 2 * padding);
-
-    // Save the PDF
-    pdf.save(`${sectionId}.pdf`);
+  const handlePrint = () => {
+    window.print();
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column' }} >
-      {/* Header with Dropdown for Front/Back selection */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-        <FormControl sx={{ width: '30%' }}>
-          <InputLabel>Page</InputLabel>
-          <Select
-            value={page}
-            onChange={handlePageChange}
-            label="Page"
-            fullWidth
+    <div className="w-full flex flex-col items-center space-y-4 pb-12">
+      {/* Control Action Bar */}
+      <div className="w-full max-w-[850px] bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 no-print">
+        <div className="flex items-center gap-3">
+          <Link
+            to="/dashboard"
+            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+            title="Back to Dashboard"
           >
-            <MenuItem value="front">Front</MenuItem>
-            <MenuItem value="back">Back</MenuItem>
-          </Select>
-        </FormControl>
+            <ArrowBackIcon className="w-4 h-4" />
+          </Link>
+          <div>
+            <h1 className="text-base sm:text-lg font-bold text-slate-900">Unofficial Academic Transcript</h1>
+            <p className="text-xs text-slate-500">Official Student Record • Spring 2025</p>
+          </div>
+        </div>
 
-        {/* Download Button */}
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleDownloadPDF}
-        >
-          Download
-        </Button>
-      </Box>
-
-      {/* Scrollable Container for Transcript */}
-      <Paper id="transcript-front" sx={{ padding: 2, maxHeight: '100%' }}>
-        <Box
-          sx={{
-            position: "sticky",
-            top: '-17px',
-            zIndex: 1,
-            backgroundColor: "white",
-            textAlign: "center",
-            py: 2,
-            minWidth: '1100px',
-          }}
-        >
-
-          {page === 'front' ? (
-            <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Transcript</div>
-          ) : (<div id="transcript-back-heading" className="text-xl font-semibold text-gray-800 sm:text-2xl  md:text-3xl">Interpretation of Transcript Contents</div>)}
-
-        </Box>
-
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexWrap: 'nowrap',
-            width: '100%',
-            minWidth: '1100px',
-            overflow: 'auto'
-          }}>
-          {/* Show Front or Back of Transcript based on Selection */}
-          {page === "front" ? (
-            <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
-              {/* First Column for First Half of Data */}
-              <Box id="test" sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div><strong>Name:</strong> Riyan Jamil</div>
-                <div><strong>Roll No:</strong> 2023F-BSE-075</div>
-                <div><strong>Degree Status:</strong> In-Progress</div>
-                <div><strong>Batch:</strong> 2023F</div>
-              </Box>
-
-              {/* Second Column for Second Half of Data */}
-              <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div><strong>Mode of Study:</strong> Regular</div>
-                <div><strong>Father's Name:</strong> Muhammad Jamil</div>
-                <div><strong>Enrolment No:</strong> 1111F/SE/2023F</div>
-                <div><strong>CNIC / Passport No:</strong> XXXXX-XXXXXX-X</div>
-              </Box>
-
-              {/* Third Column for Image */}
-              <Box sx={{ flex: 0.5, display: 'flex', justifyContent: 'flex-end' }}>
-                <img
-                  src="../../images/avatar.png" // Your image path
-                  alt="Riyan Jamil"
-                  style={{ width: '120px', height: '120px' }}
-                />
-              </Box>
-            </Box>
-          ) : (
-            <Box id="transcript-back" sx={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: 4, minWidth: '1100px', width: '100%' }}>
-              <TableContainer component={Paper} sx={{mb:'2rem'}}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                    <TableRow sx={{
-                      backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
-                    }}>
-                      <TableCell align="left">Grade</TableCell>
-                      <TableCell align="left">Interpretation</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rowsForTranscriptBackSideGradeInterpretation.map((row, index) => (
-                      <TableRow
-                        key={index}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                      >
-                        <TableCell component="th" scope="row">
-                          {row.grade}
-                        </TableCell>
-                        <TableCell align="left">{row.interpretation}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-
-
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                    <TableRow sx={{
-                      backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
-                    }}>
-                      <TableCell>Shortform </TableCell>
-                      <TableCell align="left">Interpretation</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rowsForTranscriptBackSideShortForms.map((row, index) => (
-                      <TableRow
-                        key={index}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                      >
-                        <TableCell component="th" scope="row">
-                          {row.shortform}
-                        </TableCell>
-                        <TableCell align="left">{row.interpretation}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-
-              <Box display={'flex'} justifyContent={'center'} flexDirection={'column'} alignItems={'center'} >
-                <div className="flex flex-col items-center gap-3 mt-4 mb-2 min-w-2xl">
-                  <div className="text-lg font-bold underline">Grading System</div>
-                  <div className="border border-black w-full">
-                    <div className="flex">
-                      <div className="flex-1 border-r border-black items-center justify-center text-center p-3.5 font-semibold">Numerical Grade</div>
-                      <div className="flex-1 border-r border-black text-center p-3.5 font-semibold">Grade Point</div>
-                      <div className="flex-1 border-r border-black text-center p-3.5 font-semibold">Letter Grade</div>
-                      <div className="flex-1 text-center p-3.5 font-semibold">Value Remarks</div>
-                    </div>
-                  </div>
-
-                  <div className="text-lg font-bold underline mt-10">Degree Requirements:</div>
-                  <div className='text-lg font-semibold'>
-                    Cumulative Grade Point Average (CGPA) minimum 2.0 calculated for all semesters.
-                  </div>
-                  <div className='text-lg font-semibold'>
-                    CGPA = (Total Grade Points / Total Credit Hours)
-                  </div>
-                </div>
-              </Box>
-
-              <Box sx={{mb:'4rem'}}>
-                <div className='flex flex-col gap-2 mb-4 text-lg font-semibold'>
-                  <div>Charter Date:	25-Oct-95</div>
-                  <div>Date of Admission:</div>
-                  <div>Date of Completion:</div>
-                  <div>Admssion Required: HSC/DAE or Equivalent Examination</div>
-                  <div>Previous Degree:	Nil</div>
-                  <div>Controller of Examinations:</div>
-                </div>
-              </Box>
-            </Box>
-          )}
-        </Box>
-
-        {/* Display Tables inside the Transcript card when page is "front" */}
-        {page === "front" && (
-          <>
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: '1rem', marginTop: 4, minWidth: '1100px', width: '100%' }}>
-              {/* First Table */}
-              <TableContainer component={Paper} sx={{ marginBottom: 4, flexDirection: 'column' }}>
-                <Table sx={{ minWidth: 450 }} size="small" aria-label="a dense table">
-                  <TableHead>
-                    <TableRow sx={{
-                      backgroundColor: 'rgb(209 213 219)', // Tailwind gray-200 hex color
-                      fontWeight: "bold",
-                    }}>
-                      <TableCell align="center" colSpan={6}>Fall 2023</TableCell>
-                    </TableRow>
-                    <TableRow sx={{
-                      backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
-                    }}>
-                      <TableCell sx={{ flex: 0.5 }}>Course Code</TableCell>
-                      <TableCell sx={{ flex: 2 }}>Course Title</TableCell>
-                      <TableCell align="right" sx={{ flex: 1 }}>Cr Hrs</TableCell>
-                      <TableCell align="right" sx={{ flex: 1 }}>Marks</TableCell>
-                      <TableCell align="right" sx={{ flex: 1 }}>Grade</TableCell>
-                      <TableCell sx={{ flex: 0.5 }}>GPs</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows.map((row) => (
-                      <TableRow key={row.code}>
-                        <TableCell>{row.code}</TableCell>
-                        <TableCell>{row.title}</TableCell>
-                        <TableCell align="right">{row.crHours}</TableCell>
-                        <TableCell align="right">{row.marks}</TableCell>
-                        <TableCell align="right">{row.grade}</TableCell>
-                        <TableCell align="right">{row.gps}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2, ml: 2 }}>
-                  {/* First Column */}
-                  <Box sx={{ flex: 1 }}>
-                    <div><strong>Total Credit Hours:</strong> 15</div>
-                    <div><strong>GPA:</strong> 3.95</div>
-                    <div><strong>CGPA:</strong> 3.95</div>
-                  </Box>
-
-                  {/* Second Column */}
-                  <Box sx={{ flex: 1 }}>
-                    <div><strong>Start Date:</strong> 09-10-2023</div>
-                    <div><strong>End Date:</strong> 30-01-2024</div>
-                  </Box>
-                </Box>
-
-              </TableContainer>
-
-              {/* Second Table */}
-              <TableContainer component={Paper} sx={{ marginBottom: 4, flexDirection: 'column' }}>
-                <Table sx={{ minWidth: 450 }} size="small" aria-label="a dense table">
-                  <TableHead sx={{
-                    backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
-                    fontWeight: "bold",
-                  }}>
-                    <TableRow sx={{
-                      backgroundColor: 'rgb(209 213 219)', // Tailwind gray-200 hex color
-                    }}>
-                      <TableCell align="center" colSpan={6}>Spring 2024</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Course Code</TableCell>
-                      <TableCell>Course Title</TableCell>
-                      <TableCell align="right">Cr Hrs</TableCell>
-                      <TableCell align="right">Marks</TableCell>
-                      <TableCell align="right">Grade</TableCell>
-                      <TableCell>GPs</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows.map((row) => (
-                      <TableRow key={row.code}>
-                        <TableCell>{row.code}</TableCell>
-                        <TableCell>{row.title}</TableCell>
-                        <TableCell align="right">{row.crHours}</TableCell>
-                        <TableCell align="right">{row.marks}</TableCell>
-                        <TableCell align="right">{row.grade}</TableCell>
-                        <TableCell align="right">{row.gps}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2, mb: 2, ml: 2 }}>
-                  {/* First Column */}
-                  <Box sx={{ flex: 1 }}>
-                    <div><strong>Total Credit Hours:</strong> 15</div>
-                    <div><strong>GPA:</strong> 3.95</div>
-                    <div><strong>CGPA:</strong> 3.95</div>
-                  </Box>
-
-                  {/* Second Column */}
-                  <Box sx={{ flex: 1 }}>
-                    <div><strong>Start Date:</strong> 09-10-2023</div>
-                    <div><strong>End Date:</strong> 30-01-2024</div>
-                  </Box>
-                </Box>
-              </TableContainer>
-            </Box>
-
-            <TableContainer component={Paper} sx={{ marginBottom: 6 , marginTop:6, boxShadow: 'none', border: 'none'}}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mb: 2 }}>
-                <Table sx={{ maxWidth: 650 }} aria-label="simple table">
-                  <TableHead sx={{ backgroundColor: 'rgb(209 213 219)' }}>
-                    <TableRow>
-                      <TableCell align='center'>Maximum Marks</TableCell>
-                      <TableCell align="center">Marks Obtained</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rowsForMarksTable.map((row, index) => (
-                      <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        <TableCell component="th" scope="row" align='center'>
-                          {row.maxMarks}
-                        </TableCell>
-                        <TableCell align="center">{row.marksObtained}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Box>
-            </TableContainer>
-
-            <TableContainer component={Paper} sx={{ marginBottom: 2, overflow: 'unset'}}>
-              <Table sx={{ minWidth: 1100 }} size="small" aria-label="a dense table">
-                <TableHead>
-                  <TableRow sx={{
-                    backgroundColor: 'rgb(209 213 219)', // Tailwind gray-200 hex color
-                    fontWeight: "bold",
-                  }}>
-                    <TableCell align="center" colSpan={8}>Updated Semester wise Status</TableCell>
-                  </TableRow>
-                  <TableRow sx={{
-                    backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
-                  }}>
-                    <TableCell sx={{ flex: 0.5 }}>S.No</TableCell>
-                    <TableCell sx={{ flex: 2 }}>Semester</TableCell>
-                    <TableCell align="center" sx={{ flex: 1 }}>Total Cr. Hr.</TableCell>
-                    <TableCell align="center" sx={{ flex: 1 }}>Earned Cr.Hr.</TableCell>
-                    <TableCell align="center" sx={{ flex: 1 }}>Earned G.P</TableCell>
-                    <TableCell align='center' sx={{ flex: 0.5 }}>Earned GPA</TableCell>
-                    <TableCell align='center' sx={{ flex: 0.5 }}>CGPA</TableCell>
-                    <TableCell align='center' sx={{ flex: 0.5 }}>No of Courses Passed</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rowsForSemesterWiseTable.map((row) => (
-                    <TableRow key={row.srNo}>
-                      <TableCell>{row.srNo}</TableCell>
-                      <TableCell>{row.semester}</TableCell>
-                      <TableCell align="center">{row.totalCrHours}</TableCell>
-                      <TableCell align="center">{row.earnedCrHours}</TableCell>
-                      <TableCell align="center">{row.earnedGp}</TableCell>
-                      <TableCell align="center">{row.earnedGpa}</TableCell>
-                      <TableCell align="center">{row.CGPA}</TableCell>
-                      <TableCell align="center">{row.numberOfCoursesPassed}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            <Box
-              sx={{
-                mt: 5,
-                display: 'flex',
-                flexDirection: 'row',
-                flexWrap: 'nowrap',
-                justifyContent: 'space-between',
-                gap: '3rem',
-                whiteSpace: 'nowrap', // prevents wrapping
-                mb: 4
-              }}
+        {/* Tab switcher & Actions */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Front / Back Toggle */}
+          <div className="bg-slate-100 p-1 rounded-xl flex items-center text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => setActiveTab("front")}
+              className={`px-3 py-1.5 rounded-lg transition-colors ${
+                activeTab === "front" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"
+              }`}
             >
-              <div>
-                Prepared By: _____________________________
-              </div>
-              <div>
-                Checked By: ______________________________
-              </div>
-              <div>
-                Controller of Examinations: ___________________________
-              </div>
-            </Box>
+              Front (Grades)
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("back")}
+              className={`px-3 py-1.5 rounded-lg transition-colors ${
+                activeTab === "back" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Back (Grading Scheme)
+            </button>
+          </div>
 
-            <Box sx={{ overflow: 'auto', display: 'flex', flexDirection: 'column', minWidth: '1100px', mb: '8rem', gap: '0.5rem' }}>
-              <div className='text-xl'>
-                DISCLAIMER/PROCLAMATION
-              </div>
-              <div>
-                Error and omissions are expected. Any entry appearing therein does not in itself confer any right or privilege to a student for the grant of any semester mark sheet/transcript or Degree, which will be issued under the rules and regulations on the basis of original record of the SSUET.
-              </div>
-              <div>
-                1. The University reserves the right to correct, modify or change the results at any time on the basis of original record or in any manner if found to have been wrongly computed or compiled. Typographical error, if any, will not entitle anybody to interpret the result in his/her favor and to claim any advantage therefrom. The University reserves the right to correct such mistakes as and when they come to notice and no action shall lie against the University.
-              </div>
-              <div>
-                2. Every care has been taken to ensure that the results are accurate. The University, however, does not hold itself responsible for any omission or mistake of results notification.
-              </div>
-              <div>
-                3.Declaration by the Student: I understand that I am being allowed to appear in the above examinations on the condition that I have completed the attendance requirement. If my attendance is short or I have not fulfilled any other condition of appearing in examinations, my result may be canceled.
-              </div>
-              <div>
-                4. Note: Ineligible candidates shall not claim any right for the announcement of their results if an admit card is issued to them inadvertently on the basis of incorrect/false information.
-              </div>
-            </Box>
+          {/* Download PDF */}
+          <button
+            type="button"
+            onClick={handleDownloadPDF}
+            disabled={downloading}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm transition-colors disabled:opacity-50"
+          >
+            <DownloadIcon className="w-4 h-4" />
+            <span>{downloading ? "Generating..." : "Download PDF"}</span>
+          </button>
 
+          {/* Print */}
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs shadow-sm transition-colors"
+          >
+            <PrintIcon className="w-4 h-4" />
+            <span>Print</span>
+          </button>
+        </div>
+      </div>
 
-          </>
-        )}
+      {/* Screen container: horizontal scroll for mobile, exact A4 layout for print */}
+      <div className="w-full overflow-x-auto py-2 flex justify-start lg:justify-center">
+        <div
+          ref={transcriptRef}
+          className="transcript-print-container shrink-0 w-[840px] bg-white p-8 border border-slate-300 shadow-md text-slate-900 rounded-lg font-sans text-xs select-none"
+        >
+          {activeTab === "front" ? (
+            /* ================= FRONT TRANSCRIPT ================= */
+            <div className="space-y-4">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b-2 border-slate-900 pb-3">
+                <div className="w-20 h-20 shrink-0">
+                  <img
+                    src={`${baseUrl}images/login-logo.png`}
+                    alt="SSUET Logo"
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `${baseUrl}images/login-logo.jpg`;
+                    }}
+                  />
+                </div>
 
-      </Paper>
-    </Box>
+                <div className="text-center flex-1 px-4">
+                  <h2 className="text-xl font-extrabold uppercase tracking-tight text-slate-900">
+                    Sir Syed University of Engineering & Technology
+                  </h2>
+                  <p className="text-xs font-semibold text-slate-700 mt-0.5">
+                    Office of the Controller of Examinations • Karachi, Pakistan
+                  </p>
+                  <span className="inline-block mt-1 px-3 py-0.5 bg-slate-900 text-white text-xs font-bold uppercase tracking-wider rounded">
+                    Unofficial Transcript of Academic Record
+                  </span>
+                </div>
+
+                <div className="w-20 h-24 shrink-0 border border-slate-300 rounded overflow-hidden">
+                  <img
+                    src={`${baseUrl}images/avatar.png`}
+                    alt="Candidate"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `${baseUrl}images/dp.png`;
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Student Demographics Grid */}
+              <div className="grid grid-cols-4 border border-slate-900 text-[11px]">
+                <div className="p-1.5 bg-slate-100 font-bold border-r border-b border-slate-900">Student Name:</div>
+                <div className="p-1.5 border-r border-b border-slate-900 font-semibold">Riyan Jamil</div>
+                <div className="p-1.5 bg-slate-100 font-bold border-r border-b border-slate-900">Roll No / ID:</div>
+                <div className="p-1.5 border-b border-slate-900 font-semibold font-mono">2023F-BSE-075</div>
+
+                <div className="p-1.5 bg-slate-100 font-bold border-r border-b border-slate-900">Father's Name:</div>
+                <div className="p-1.5 border-r border-b border-slate-900">Muhammad Jamil</div>
+                <div className="p-1.5 bg-slate-100 font-bold border-r border-b border-slate-900">Enrolment No:</div>
+                <div className="p-1.5 border-b border-slate-900 font-mono">2959/SE/2023F</div>
+
+                <div className="p-1.5 bg-slate-100 font-bold border-r border-slate-900">Degree Program:</div>
+                <div className="p-1.5 border-r border-slate-900">Bachelor of Science in Software Engineering</div>
+                <div className="p-1.5 bg-slate-100 font-bold border-r border-slate-900">Batch & Session:</div>
+                <div className="p-1.5">Batch 2023F • Regular Morning</div>
+              </div>
+
+              {/* Semester 1 & 2 Course Records */}
+              <div className="grid grid-cols-2 gap-4 mt-3">
+                {/* Fall 2023 Table */}
+                <div className="border border-slate-900 rounded overflow-hidden">
+                  <div className="bg-slate-200 text-slate-900 font-bold p-1 text-center border-b border-slate-900 text-[11px]">
+                    Fall 2023 Semester (1st Semester)
+                  </div>
+                  <table className="w-full text-[10px] text-left">
+                    <thead>
+                      <tr className="bg-slate-100 border-b border-slate-900 font-semibold">
+                        <th className="p-1">Code</th>
+                        <th className="p-1">Course Title</th>
+                        <th className="p-1 text-center">Cr</th>
+                        <th className="p-1 text-center">Grade</th>
+                        <th className="p-1 text-right">GP</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200">
+                      {sem1Courses.map((c, idx) => (
+                        <tr key={idx}>
+                          <td className="p-1 font-mono font-medium">{c.code}</td>
+                          <td className="p-1 truncate max-w-[140px]">{c.title}</td>
+                          <td className="p-1 text-center">{c.crHours}</td>
+                          <td className="p-1 text-center font-bold">{c.grade}</td>
+                          <td className="p-1 text-right font-mono">{c.gps.toFixed(1)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="p-1 bg-slate-100 border-t border-slate-900 flex justify-between text-[10px] font-semibold">
+                    <span>Cr. Hours: 15</span>
+                    <span>SGPA: 3.95</span>
+                    <span>CGPA: 3.95</span>
+                  </div>
+                </div>
+
+                {/* Spring 2024 Table */}
+                <div className="border border-slate-900 rounded overflow-hidden">
+                  <div className="bg-slate-200 text-slate-900 font-bold p-1 text-center border-b border-slate-900 text-[11px]">
+                    Spring 2024 Semester (2nd Semester)
+                  </div>
+                  <table className="w-full text-[10px] text-left">
+                    <thead>
+                      <tr className="bg-slate-100 border-b border-slate-900 font-semibold">
+                        <th className="p-1">Code</th>
+                        <th className="p-1">Course Title</th>
+                        <th className="p-1 text-center">Cr</th>
+                        <th className="p-1 text-center">Grade</th>
+                        <th className="p-1 text-right">GP</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200">
+                      {sem2Courses.map((c, idx) => (
+                        <tr key={idx}>
+                          <td className="p-1 font-mono font-medium">{c.code}</td>
+                          <td className="p-1 truncate max-w-[140px]">{c.title}</td>
+                          <td className="p-1 text-center">{c.crHours}</td>
+                          <td className="p-1 text-center font-bold">{c.grade}</td>
+                          <td className="p-1 text-right font-mono">{c.gps.toFixed(1)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="p-1 bg-slate-100 border-t border-slate-900 flex justify-between text-[10px] font-semibold">
+                    <span>Cr. Hours: 16</span>
+                    <span>SGPA: 3.98</span>
+                    <span>CGPA: 3.96</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cumulative Progression Table */}
+              <div className="mt-3">
+                <h4 className="font-bold text-[11px] text-slate-800 uppercase tracking-wider mb-1">
+                  Cumulative Academic Performance Summary
+                </h4>
+                <table className="w-full border-collapse border border-slate-900 text-[11px]">
+                  <thead>
+                    <tr className="bg-slate-200 text-slate-900 font-bold">
+                      <th className="border border-slate-900 p-1 text-center">#</th>
+                      <th className="border border-slate-900 p-1 text-left">Semester</th>
+                      <th className="border border-slate-900 p-1 text-center">Total Cr</th>
+                      <th className="border border-slate-900 p-1 text-center">Earned Cr</th>
+                      <th className="border border-slate-900 p-1 text-center">Earned GP</th>
+                      <th className="border border-slate-900 p-1 text-center">SGPA</th>
+                      <th className="border border-slate-900 p-1 text-center">CGPA</th>
+                      <th className="border border-slate-900 p-1 text-center">Passed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {semesterWiseSummary.map((s) => (
+                      <tr key={s.sr} className="border-b border-slate-300">
+                        <td className="border border-slate-900 p-1 text-center font-mono">{s.sr}</td>
+                        <td className="border border-slate-900 p-1 font-medium">{s.semester}</td>
+                        <td className="border border-slate-900 p-1 text-center font-mono">{s.totalCr}</td>
+                        <td className="border border-slate-900 p-1 text-center font-mono">{s.earnedCr}</td>
+                        <td className="border border-slate-900 p-1 text-center font-mono">{s.earnedGp.toFixed(1)}</td>
+                        <td className="border border-slate-900 p-1 text-center font-bold text-indigo-700">{s.gpa.toFixed(2)}</td>
+                        <td className="border border-slate-900 p-1 text-center font-bold text-emerald-700">{s.cgpa}</td>
+                        <td className="border border-slate-900 p-1 text-center text-emerald-700 font-semibold">{s.passed} Courses</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Signatures Line */}
+              <div className="mt-8 pt-4 flex justify-between items-end border-t border-slate-300 text-[11px]">
+                <div className="text-center">
+                  <div className="w-36 border-b border-slate-900 pb-1 mb-1"></div>
+                  <p className="font-bold text-slate-800">Prepared By</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-36 border-b border-slate-900 pb-1 mb-1"></div>
+                  <p className="font-bold text-slate-800">Checked By</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-44 border-b border-slate-900 pb-1 mb-1 text-xs font-serif italic text-slate-600">
+                    Dr. M. A. Qureshi
+                  </div>
+                  <p className="font-bold text-slate-800">Controller of Examinations</p>
+                </div>
+              </div>
+
+              {/* Disclaimer */}
+              <div className="mt-4 p-2 bg-slate-50 border border-slate-200 rounded text-[9.5px] text-slate-500 leading-tight">
+                <strong>Disclaimer:</strong> This unofficial transcript is an accurate statement of academic record as of 15-May-2025. It is issued for informational and student verification purposes without official university seal. Official transcripts are issued exclusively by the Registrar's Office.
+              </div>
+            </div>
+          ) : (
+            /* ================= BACK TRANSCRIPT (REGULATIONS) ================= */
+            <div className="space-y-4">
+              <div className="border-b-2 border-slate-900 pb-2 text-center">
+                <h3 className="text-base font-bold uppercase tracking-wider text-slate-900">
+                  Interpretation of Transcript Contents & Academic Regulations
+                </h3>
+                <p className="text-xs text-slate-600">Sir Syed University of Engineering & Technology Grading Scheme</p>
+              </div>
+
+              {/* Grade Meaning Table */}
+              <div>
+                <h4 className="font-bold text-xs text-slate-800 mb-1">Special Grade Notations</h4>
+                <table className="w-full border-collapse border border-slate-900 text-[11px]">
+                  <thead>
+                    <tr className="bg-slate-200 text-slate-900 font-bold">
+                      <th className="border border-slate-900 p-1.5 w-20 text-center">Grade</th>
+                      <th className="border border-slate-900 p-1.5 text-left">Academic Meaning & Interpretation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {gradeInterpretations.map((g, idx) => (
+                      <tr key={idx} className="border-b border-slate-300">
+                        <td className="border border-slate-900 p-1.5 text-center font-bold font-mono">{g.grade}</td>
+                        <td className="border border-slate-900 p-1.5">{g.meaning}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Grading Scheme Table */}
+              <div className="mt-3">
+                <h4 className="font-bold text-xs text-slate-800 mb-1">Statutory Grading System</h4>
+                <table className="w-full border-collapse border border-slate-900 text-[11px]">
+                  <thead>
+                    <tr className="bg-slate-200 text-slate-900 font-bold">
+                      <th className="border border-slate-900 p-1 text-center">Marks Range</th>
+                      <th className="border border-slate-900 p-1 text-center">Grade Point</th>
+                      <th className="border border-slate-900 p-1 text-center">Letter Grade</th>
+                      <th className="border border-slate-900 p-1 text-left">Standing / Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {gradingScale.map((s, idx) => (
+                      <tr key={idx} className="border-b border-slate-300">
+                        <td className="border border-slate-900 p-1 text-center font-mono">{s.marks}%</td>
+                        <td className="border border-slate-900 p-1 text-center font-bold font-mono">{s.gpa}</td>
+                        <td className="border border-slate-900 p-1 text-center font-bold">{s.grade}</td>
+                        <td className="border border-slate-900 p-1 text-slate-700">{s.remarks}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Degree Requirements Formula */}
+              <div className="p-3 bg-slate-50 border border-slate-300 rounded text-xs space-y-1">
+                <p className="font-bold text-slate-900">Graduation Requirements:</p>
+                <p className="text-slate-600">
+                  Minimum CGPA of <strong>2.00</strong> on a 4.00 scale across all curriculum semesters, with zero remaining F grades.
+                </p>
+                <p className="font-mono text-slate-800 text-[11px] bg-slate-100 p-1.5 rounded border border-slate-200">
+                  CGPA = (Sum of [Credit Hours × Course Grade Point]) / (Total Cumulative Credit Hours)
+                </p>
+              </div>
+
+              {/* University Charter Details */}
+              <div className="grid grid-cols-2 gap-3 text-[11px] p-3 bg-slate-100 rounded border border-slate-200">
+                <div>
+                  <span className="font-bold text-slate-700">University Charter Date: </span>
+                  <span>25-Oct-1995 (Sindh Assembly Act XII)</span>
+                </div>
+                <div>
+                  <span className="font-bold text-slate-700">Accreditation: </span>
+                  <span>HEC Recognized / PEC Level-II (Washington Accord)</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
+
+export default PrintTranscript;

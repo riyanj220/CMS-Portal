@@ -1,186 +1,232 @@
-import * as React from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Box from '@mui/material/Box';
+import { useState } from "react";
+import SearchIcon from "@mui/icons-material/Search";
+import SchoolIcon from "@mui/icons-material/School";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
-interface Column {
-  id: keyof Data;
-  label: string;
-  minWidth?: number;
-  align?: 'right';
-  format?: (value: any) => string;
-}
-
-interface Data {
+interface CourseRecord {
   course: string;
   courseCode: string;
   semester: string;
   session: string;
-  fromDate: string;
-  coursePassed: string;
   sectionCode: string;
   faculty: string;
   timings: string;
+  crHours: number;
+  status: string;
 }
 
-const columns: Column[] = [
-  { id: 'course', label: 'COURSE', minWidth: 170 },
-  { id: 'courseCode', label: 'COURSE CODE', minWidth: 120 },
-  { id: 'semester', label: 'SEMESTER', minWidth: 100 },
-  { id: 'session', label: 'SESSION', minWidth: 100 },
-  { id: 'fromDate', label: 'FROM DATE', minWidth: 120 },
-  { id: 'coursePassed', label: 'COURSE PASSED STATUS', minWidth: 180 },
-  { id: 'sectionCode', label: 'SECTION CODE', minWidth: 120 },
-  { id: 'faculty', label: 'FACULTY', minWidth: 170 },
-  { id: 'timings', label: 'TIMINGS', minWidth: 120 },
+const coursesData: CourseRecord[] = [
+  {
+    course: "Probability & Statistics",
+    courseCode: "MS301T",
+    semester: "4th",
+    session: "Spring 2025",
+    sectionCode: "Spring 2025-2023F-BS-SE-MS301T-B",
+    faculty: "Muhammad Mobin Anwer Siddiqui",
+    timings: "CF-4 Wed (13:30 - 15:30), CG-3 Fri (08:30 - 09:30)",
+    crHours: 3,
+    status: "In Progress",
+  },
+  {
+    course: "Technical Report Writing",
+    courseCode: "HS211",
+    semester: "4th",
+    session: "Spring 2025",
+    sectionCode: "Spring 2025-2023F-BS-SE-HS211-B",
+    faculty: "Syeda Beena Bukhari",
+    timings: "CF-3 Mon (15:30 - 16:30), CF-4 Thu (10:30 - 11:30)",
+    crHours: 3,
+    status: "In Progress",
+  },
+  {
+    course: "Software Design & Architecture",
+    courseCode: "SE211T",
+    semester: "4th",
+    session: "Spring 2025",
+    sectionCode: "Spring 2025-2023F-BS-SE-SE211T-B",
+    faculty: "Engr. Dur-E-Shawar Agha",
+    timings: "CF-3 Fri (15:30 - 16:30), CF-4 Wed (15:30 - 16:30), CG-2 Thu (14:30 - 15:30)",
+    crHours: 3,
+    status: "In Progress",
+  },
+  {
+    course: "Software Design & Architecture Lab",
+    courseCode: "SE211L",
+    semester: "4th",
+    session: "Spring 2025",
+    sectionCode: "Spring 2025-2023F-BS-SE-SE211L-B",
+    faculty: "Engr. Muhammad Huzaifa",
+    timings: "BF-03 Mon (11:30 - 14:30)",
+    crHours: 1,
+    status: "In Progress",
+  },
+  {
+    course: "Operating Systems Lab",
+    courseCode: "SE204L",
+    semester: "4th",
+    session: "Spring 2025",
+    sectionCode: "Spring 2025-2023F-BS-SE-SE204L-B",
+    faculty: "Engr. Samrah Shafique",
+    timings: "BF-02 Thu (11:30 - 14:30)",
+    crHours: 1,
+    status: "In Progress",
+  },
+  {
+    course: "Operating Systems",
+    courseCode: "SE204T",
+    semester: "4th",
+    session: "Spring 2025",
+    sectionCode: "Spring 2025-2023F-BS-SE-SE204T-B",
+    faculty: "Engr. Farheen Qazi",
+    timings: "CF-3 Fri (14:30 - 15:30), CF-3 Mon (16:30 - 17:30)",
+    crHours: 3,
+    status: "In Progress",
+  },
+  {
+    course: "Introduction to Database Systems Lab",
+    courseCode: "SE209L",
+    semester: "4th",
+    session: "Spring 2025",
+    sectionCode: "Spring 2025-2023F-BS-SE-SE209L-B",
+    faculty: "Engr. Sumreena Bano",
+    timings: "CS-4 Fri (09:30 - 12:30)",
+    crHours: 1,
+    status: "In Progress",
+  },
+  {
+    course: "Introduction to Database Systems",
+    courseCode: "SE209T",
+    semester: "4th",
+    session: "Spring 2025",
+    sectionCode: "Spring 2025-2023F-BS-SE-SE209T-B",
+    faculty: "Engr. Kiran Hidayat",
+    timings: "CF-3 Mon (14:30 - 15:30), CF-4 Thu (08:30 - 10:30)",
+    crHours: 3,
+    status: "In Progress",
+  },
 ];
 
-function createData(
-  course: string,
-  courseCode: string,
-  semester: string,
-  session: string,
-  fromDate: string,
-  coursePassed: string,
-  sectionCode: string,
-  faculty: string,
-  timings: string
-): Data {
-  return {
-    course,
-    courseCode,
-    semester,
-    session,
-    fromDate,
-    coursePassed,
-    sectionCode,
-    faculty,
-    timings,
-  };
-}
+const Course = () => {
+  const [searchTerm, setSearchTerm] = useState("");
 
-const rows = [
-  createData('Probability & Satistics', 'MS301T - 2002', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-MS301T-B-17239', 'Muhammad Mobin Anwer Siddiqui', 'CF-4 Wednesday (13:30:00 - 14:30:00), CF-4 Wednesday (14:30:00 - 15:30:00), CG-3 Friday (08:30:00 - 09:30:00)'),
-  createData('Technical Writing', 'HS211 - 2347', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-HS211-B-17238', 'Syeda Beena Bukhari', 'CF-3 Monday (15:30:00 - 16:30:00), CF-4 Thursday (10:30:00 - 11:30:00)'),
-  createData('Software design and architecture', 'SE211T - 4230', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', '	Spring 2025-2023F-BS-SE-SE211T-B-17240', 'Engr. Dur-E-Shawar Agha', 'CF-3 Friday (15:30:00 - 16:30:00), CF-4 Wednesday (15:30:00 - 16:30:00), CG-2 Thursday (14:30:00 - 15:30:00)'),
-
-  createData('Software design and architecture lab', 'SE211L - 4231', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-SE211L-B-17224', 'Engr. Muhammad Huzaifa', 'BF-03 Monday (11:30:00 - 14:30:00)'),
-
-  createData('Operating system lab', 'SE204L - 4232', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-SE204L-B-17237', 'Engr. Samrah Shafique', 'BF-02 Thursday (11:30:00 - 14:30:00)'),
-
-  createData('Operating system', 'SE204T - 4233', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-SE204T-B-17236', 'Engr. Farheen Qazi', 'CF-3 Friday (14:30:00 - 15:30:00), CF-3 Monday (16:30:00 - 17:30:00), CF-4 Wednesday (16:30:00 - 17:30:00)'),
-
-  createData('Introduction to Database Lab', 'SE209L - 4234', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', 'Spring 2025-2023F-BS-SE-SE209L-B-17234', 'Engr. Sumreena Bano', 'CS-4 Friday (09:30:00 - 12:30:00)'),
-
-  createData('Introduction to Database systems', 'SE209T - 4235', '4th', 'Spring 2025', ' 2025	1/2/2025 12:00:00 AM', 'Final result not created', '	Spring 2025-2023F-BS-SE-SE209T-B-17231', 'Engr. Kiran Hidayat', 'CF-3 Monday (14:30:00 - 15:30:00), CF-4 Thursday (08:30:00 - 09:30:00), CF-4 Thursday (09:30:00 - 10:30:00)'),
-
-];
-
-
-function Course() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
-  return (
-    <Paper sx={{ width: '100%' }}>
-      {/* Sticky Heading */}
-      <Box
-        sx={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 2,
-          backgroundColor: 'white',
-          textAlign: 'center',
-          py: 2,
-        }}
-      >
-        <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4  md:text-3xl">Courses</div>
-      </Box>
-
-      <TableContainer
-        sx={{
-          maxHeight: 600,
-          '@media (max-device-width: 768px)': {
-            maxHeight: 'unset',
-          },
-          "&::-webkit-scrollbar": {
-            width: "6px",         // narrow width
-            height: "6px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#c4b5fd", // soft purple scroll thumb
-            borderRadius: "3px",
-          },
-          "&::-webkit-scrollbar-track": {
-            backgroundColor: "#f3f4f6", // light gray track
-          },
-          scrollbarWidth: "thin", // for Firefox
-          scrollbarColor: "#c4b5fd #f3f4f6",
-        }}
-      >
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                  sx={{ backgroundColor: '#E5E7EB', fontWeight: 'bold' }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.courseCode}>
-                  {columns.map((column) => {
-                    const value = row[column.id];
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === 'number'
-                          ? column.format(value)
-                          : value}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
+  const filteredCourses = coursesData.filter((c) =>
+    c.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.faculty.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-}
+  const totalCredits = coursesData.reduce((acc, curr) => acc + curr.crHours, 0);
+
+  return (
+    <div className="space-y-6 pb-12">
+      {/* Header Banner */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-indigo-600" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
+                Academic Curriculum
+              </span>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">
+              Registered Courses
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+              Spring 2025 Semester • 4th Semester BS Software Engineering (Morning)
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="px-3 py-1.5 rounded-xl bg-slate-100 font-medium text-xs text-slate-700">
+              Total Courses: <strong>{coursesData.length}</strong>
+            </span>
+            <span className="px-3 py-1.5 rounded-xl bg-indigo-50 font-bold text-xs text-indigo-700">
+              Credits: {totalCredits} Cr. Hrs
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Search & Actions Bar */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4">
+        <div className="relative max-w-md">
+          <SearchIcon className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search by course title, code or instructor..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full text-xs pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors"
+          />
+        </div>
+      </div>
+
+      {/* Courses Table Card */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <SchoolIcon className="w-4 h-4 text-indigo-600" />
+            <h2 className="text-sm font-bold text-slate-800">Enrolled Course Portfolio</h2>
+          </div>
+          <span className="text-xs text-slate-500">{filteredCourses.length} Courses Listed</span>
+        </div>
+
+        {/* Responsive Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs whitespace-nowrap">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+                <th className="py-3.5 px-4">Course Name & Code</th>
+                <th className="py-3.5 px-4">Session</th>
+                <th className="py-3.5 px-4 text-center">Cr. Hrs</th>
+                <th className="py-3.5 px-4">Faculty Member</th>
+                <th className="py-3.5 px-4">Class Schedule & Room</th>
+                <th className="py-3.5 px-4 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredCourses.map((row, idx) => (
+                <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                  <td className="py-3.5 px-4">
+                    <div className="font-semibold text-slate-900">{row.course}</div>
+                    <span className="text-[11px] font-mono text-slate-400">{row.courseCode}</span>
+                  </td>
+                  <td className="py-3.5 px-4">
+                    <span className="text-slate-600 font-medium">{row.session}</span>
+                    <div className="text-[10px] text-slate-400">Semester {row.semester}</div>
+                  </td>
+                  <td className="py-3.5 px-4 text-center">
+                    <span className="inline-block px-2.5 py-0.5 rounded font-mono font-bold text-[11px] bg-slate-100 text-slate-700">
+                      {row.crHours}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-4 text-slate-700">
+                    <div className="flex items-center gap-1.5">
+                      <PersonOutlineIcon className="w-3.5 h-3.5 text-slate-400" />
+                      <span>{row.faculty}</span>
+                    </div>
+                  </td>
+                  <td className="py-3.5 px-4 text-slate-600 max-w-xs truncate">
+                    <div className="flex items-center gap-1.5">
+                      <AccessTimeIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span className="truncate">{row.timings}</span>
+                    </div>
+                  </td>
+                  <td className="py-3.5 px-4 text-center">
+                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-700">
+                      {row.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default Course;

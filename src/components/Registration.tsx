@@ -1,383 +1,383 @@
-import { Alert, Box, Button, Checkbox, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Modal, Paper, Select, Snackbar, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Tooltip, Typography } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { SaveIcon } from "lucide-react";
 import { useState } from "react";
-import { alpha } from "@mui/material/styles";
-import DeleteIcon from '@mui/icons-material/Delete';
+import {
+  Alert,
+  Snackbar,
+  Modal,
+  Box,
+  Typography,
+  Button,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
+import SaveIcon from "@mui/icons-material/Save";
 
-type Course = ReturnType<typeof createData>;
-type SectionData = Record<string, Course[]>
+interface Course {
+  id: number;
+  name: string;
+  courseCode: string;
+  courseType: string;
+  creditHours: number;
+  teacher: string;
+  timing: string;
+  availableSeats: number;
+}
 
-const createData = (id: number, name: string, courseCode: string, courseType: string, creditHours: number, seatsAvailableComment: string, info: string, teacher: string, timing: string, availableSeats: number) => ({
-  id, name, courseCode, courseType, creditHours, seatsAvailableComment, info, teacher, timing, availableSeats
-});
-
+const initialSections: Record<string, Course[]> = {
+  A: [
+    { id: 1, name: "Computing Professional Practices", courseCode: "HS412T", courseType: "Core", creditHours: 3, teacher: "Engr. Shoaib Alam", timing: "Mon 08:30 - 09:30 | CF-44", availableSeats: 17 },
+    { id: 2, name: "Data Structures & Algorithms", courseCode: "CS202T", courseType: "Core", creditHours: 3, teacher: "Dr. Ahmed", timing: "Tue 11:30 - 12:30 | CF-12", availableSeats: 10 },
+    { id: 3, name: "Software Design & Architecture", courseCode: "CS310T", courseType: "Elective", creditHours: 3, teacher: "Ms. Hira", timing: "Wed 09:30 - 10:30 | CF-22", availableSeats: 0 },
+  ],
+  B: [
+    { id: 4, name: "Database Systems", courseCode: "CS303T", courseType: "Core", creditHours: 3, teacher: "Engr. Bilal", timing: "Mon 10:30 - 11:30 | CF-10", availableSeats: 5 },
+    { id: 5, name: "Web Engineering", courseCode: "CS401T", courseType: "Elective", creditHours: 3, teacher: "Ms. Sara", timing: "Tue 13:30 - 14:30 | CF-09", availableSeats: 8 },
+    { id: 6, name: "Operating Systems", courseCode: "CS305T", courseType: "Core", creditHours: 3, teacher: "Dr. Ali", timing: "Fri 14:30 - 15:30 | CF-20", availableSeats: 0 },
+  ],
+  C: [
+    { id: 7, name: "Artificial Intelligence", courseCode: "CS501T", courseType: "Elective", creditHours: 3, teacher: "Dr. Faizan", timing: "Thu 10:30 - 11:30 | CF-18", availableSeats: 12 },
+    { id: 8, name: "Machine Learning", courseCode: "CS502T", courseType: "Elective", creditHours: 3, teacher: "Dr. Sana", timing: "Wed 11:30 - 12:30 | CF-15", availableSeats: 14 },
+    { id: 9, name: "Computer Networks", courseCode: "CS404T", courseType: "Core", creditHours: 3, teacher: "Mr. Usman", timing: "Mon 14:30 - 15:30 | CF-11", availableSeats: 3 },
+  ],
+};
 
 const Registration = () => {
-
-  const [section, setSection] = useState('');
-  const [savedCourses, setSavedCourses] = useState<ReturnType<typeof createData>[]>([]);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [rowToDelete, setRowToDelete] = useState<null | number>(null); // store row ID
-  const [sectionData, setSectionData] = useState<SectionData>(() => ({
-    A: [
-      createData(1, 'COMPUTING PROFESSIONAL PRACTICES', 'HS412T', 'core', 3, 'Available', 'Spring 2025 - A', 'Engr. Shoaib Alam', 'MON 8:30AM - 9:30AM | CF-44', 17),
-      createData(2, 'DATA STRUCTURES', 'CS202T', 'core', 3, 'Available', 'Spring 2025 - A', 'Dr. Ahmed', 'TUE 11:30AM - 12:30PM | CF-12', 10),
-      createData(3, 'SOFTWARE DESIGN', 'CS310T', 'elective', 3, 'Not Available', 'Spring 2025 - A', 'Ms. Hira', 'WED 9:30AM - 10:30AM | CF-22', 0),
-    ],
-    B: [
-      createData(4, 'DATABASE SYSTEMS', 'CS303T', 'core', 3, 'Available', 'Spring 2025 - B', 'Engr. Bilal', 'MON 10:30AM - 11:30AM | CF-10', 5),
-      createData(5, 'WEB ENGINEERING', 'CS401T', 'elective', 3, 'Available', 'Spring 2025 - B', 'Ms. Sara', 'TUE 1:30PM - 2:30PM | CF-9', 8),
-      createData(6, 'OPERATING SYSTEMS', 'CS305T', 'core', 3, 'Not Available', 'Spring 2025 - B', 'Dr. Ali', 'FRI 2:30PM - 3:30PM | CF-20', 0),
-    ],
-    C: [
-      createData(7, 'ARTIFICIAL INTELLIGENCE', 'CS501T', 'elective', 3, 'Available', 'Spring 2025 - C', 'Dr. Faizan', 'THU 10:30AM - 11:30AM | CF-18', 12),
-      createData(8, 'MACHINE LEARNING', 'CS502T', 'elective', 3, 'Available', 'Spring 2025 - C', 'Dr. Sana', 'WED 11:30AM - 12:30PM | CF-15', 14),
-      createData(9, 'COMPUTER NETWORKS', 'CS404T', 'core', 3, 'Available', 'Spring 2025 - C', 'Mr. Usman', 'MON 2:30PM - 3:30PM | CF-11', 3),
-    ],
-    D: [
-      createData(10, 'HUMAN COMPUTER INTERACTION', 'CS406T', 'elective', 3, 'Available', 'Spring 2025 - D', 'Ms. Amna', 'MON 3:30PM - 4:30PM | CF-7', 9),
-      createData(11, 'MOBILE COMPUTING', 'CS408T', 'elective', 3, 'Available', 'Spring 2025 - D', 'Dr. Shahbaz', 'WED 2:00PM - 3:00PM | CF-5', 6),
-      createData(12, 'INFORMATION SECURITY', 'CS409T', 'core', 3, 'Not Available', 'Spring 2025 - D', 'Engr. Rizwan', 'FRI 12:30PM - 1:30PM | CF-13', 0),
-    ],
-    E: [
-      createData(13, 'PROJECT MANAGEMENT', 'PM401T', 'core', 3, 'Available', 'Spring 2025 - E', 'Ms. Huma', 'TUE 9:30AM - 10:30AM | CF-3', 11),
-      createData(14, 'BIG DATA ANALYTICS', 'CS510T', 'elective', 3, 'Available', 'Spring 2025 - E', 'Dr. Kamran', 'THU 11:30AM - 12:30PM | CF-8', 5),
-      createData(15, 'BLOCKCHAIN TECHNOLOGY', 'CS511T', 'elective', 3, 'Available', 'Spring 2025 - E', 'Dr. Nida', 'MON 4:00PM - 5:00PM | CF-6', 7),
-    ],
-    F: [
-      createData(16, 'EMBEDDED SYSTEMS', 'CS512T', 'core', 3, 'Available', 'Spring 2025 - F', 'Engr. Yasir', 'TUE 3:30PM - 4:30PM | CF-1', 4),
-      createData(17, 'DATA VISUALIZATION', 'CS513T', 'elective', 3, 'Available', 'Spring 2025 - F', 'Ms. Zainab', 'WED 1:30PM - 2:30PM | CF-14', 6),
-      createData(18, 'CLOUD COMPUTING', 'CS514T', 'elective', 3, 'Not Available', 'Spring 2025 - F', 'Dr. Asim', 'FRI 11:00AM - 12:00PM | CF-2', 1),
-    ],
-  }));
-
-
-  const handleSectionChange = (event: any) => {
-    setSection(event.target.value);
-  }
+  const [section, setSection] = useState("B");
+  const [sectionData, setSectionData] = useState(initialSections);
   const [selected, setSelected] = useState<number[]>([]);
+  const [savedCourses, setSavedCourses] = useState<Course[]>([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState<number | null>(null);
 
-  const [dense, setDense] = useState(false);
-
-  const handleSave = () => {
-    const selectedRows = sectionData[section].filter((row) =>
-      selected.includes(row.id)
+  const handleToggleSelect = (id: number) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
-
-    const newRows = selectedRows.filter(
-      (row) => !savedCourses.some((saved) => saved.id === row.id)
-    );
-
-    if (newRows.length > 0) {
-      setSavedCourses((prev) => [...prev, ...newRows]);
-      setSnackbarOpen(true);
-
-      // Decrease availableSeats by 1 for saved courses
-      const updatedSection = sectionData[section].map((row) => {
-        if (newRows.some((saved) => saved.id === row.id)) {
-          return {
-            ...row,
-            availableSeats: Math.max(row.availableSeats - 1, 0), // avoid negative seats
-          };
-        }
-        return row;
-      });
-
-      setSectionData((prev) => ({
-        ...prev,
-        [section]: updatedSection,
-      }));
-    }
-
-    setSelected([]);
   };
 
+  const handleSaveCourses = () => {
+    const currentCourses = sectionData[section] || [];
+    const coursesToSave = currentCourses.filter(
+      (c) => selected.includes(c.id) && !savedCourses.some((sc) => sc.id === c.id)
+    );
+
+    if (coursesToSave.length > 0) {
+      setSavedCourses((prev) => [...prev, ...coursesToSave]);
+      setSnackbarOpen(true);
+
+      // Decrement seats
+      setSectionData((prev) => ({
+        ...prev,
+        [section]: prev[section].map((c) =>
+          selected.includes(c.id) ? { ...c, availableSeats: Math.max(c.availableSeats - 1, 0) } : c
+        ),
+      }));
+
+      setSelected([]);
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    if (courseToDelete !== null) {
+      setSavedCourses((prev) => prev.filter((c) => c.id !== courseToDelete));
+      setDeleteModalOpen(false);
+      setCourseToDelete(null);
+    }
+  };
+
+  const totalRegisteredCr = savedCourses.reduce((sum, c) => sum + c.creditHours, 0);
 
   return (
-    <>
+    <div className="space-y-6 pb-12">
+      {/* Toast */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity="success"
-          variant="filled"
-          sx={{ width: '100%' }}
-        >
-          Courses saved successfully!
+        <Alert onClose={() => setSnackbarOpen(false)} severity="success" variant="filled">
+          Selected courses confirmed and registered successfully!
         </Alert>
       </Snackbar>
 
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          border: '2px solid #000',
-          boxShadow: 24,
-          p: 4,
-        }}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Confirm Delete
+      {/* Delete Confirmation Modal */}
+      <Modal open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "90%", sm: 420 },
+            bgcolor: "background.paper",
+            borderRadius: 3,
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography variant="h6" component="h2" sx={{ fontWeight: 700, color: "#111827" }}>
+            Drop Course Registration
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Are you sure you want to delete this course from your saved list?
+          <Typography sx={{ mt: 1.5, fontSize: 14, color: "#6b7280" }}>
+            Are you sure you want to drop this registered course? The seat will be released back to the section quota.
           </Typography>
-          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-            <Button variant="outlined" onClick={() => setOpen(false)}>Cancel</Button>
+          <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: 1.5 }}>
+            <Button
+              variant="outlined"
+              onClick={() => setDeleteModalOpen(false)}
+              sx={{ textTransform: "none", borderRadius: 2 }}
+            >
+              Cancel
+            </Button>
             <Button
               variant="contained"
               color="error"
-              onClick={() => {
-                setSavedCourses(prev => prev.filter(p => p.id !== rowToDelete));
-                setOpen(false);
-              }}
+              onClick={handleConfirmDelete}
+              sx={{ textTransform: "none", borderRadius: 2 }}
             >
-              Delete
+              Drop Course
             </Button>
           </Box>
         </Box>
       </Modal>
 
-      <Paper sx={{ width: '100%' }}>
-        {/* Sticky Heading */}
-        <Box sx={{ position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white', textAlign: 'center', py: 2 }}>
-          <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Registration</div>
-        </Box>
+      {/* Header Banner */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-indigo-600" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
+                Online Course Enrollment
+              </span>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">
+              Semester Course Registration
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+              Select sections, pick theory/labs, and submit registration for Spring 2025
+            </p>
+          </div>
 
-        {/* Section Selector */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 3, pt: 3 }}>
-          {/* Section Selector */}
-          <Box sx={{ width: '40%' }}>
-            <FormControl fullWidth>
-              <InputLabel id="section-label">Select Section</InputLabel>
-              <Select
-                labelId="section-label"
-                value={section}
-                label="Select Section"
-                onChange={handleSectionChange}
-              >
-                {['A', 'B', 'C', 'D', 'E', 'F'].map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+          <div className="flex items-center gap-2">
+            <span className="px-3.5 py-1.5 rounded-xl bg-indigo-50 border border-indigo-100 font-bold text-xs text-indigo-700">
+              Confirmed Credits: {totalRegisteredCr} / 21 Max
+            </span>
+          </div>
+        </div>
+      </div>
 
-          {/* Total Credit Hours */}
-          <Typography sx={{ fontWeight: 'bold', pr: 3 ,fontSize:20}}>
-            Total Credit Hours:{" "}
-            {savedCourses.reduce((total, course) => total + course.creditHours, 0)}
-          </Typography>
-        </Box>
-
-        {/* Table or Message */}
-        <Box sx={{ px: 3, pb: 3 }}>
-          {section ? (
-            <>
-              <Toolbar
-                sx={{
-                  pl: { sm: 2 },
-                  pr: { xs: 1, sm: 1 },
-                  ...(selected.length > 0 && {
-                    bgcolor: (theme) =>
-                      alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                  }),
+      {/* Section Filter & Registration Action Bar */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <label className="text-xs font-bold text-slate-700 shrink-0">Select Section:</label>
+          <div className="flex items-center gap-1.5">
+            {["A", "B", "C"].map((sec) => (
+              <button
+                key={sec}
+                type="button"
+                onClick={() => {
+                  setSection(sec);
+                  setSelected([]);
                 }}
+                className={`w-9 h-9 rounded-xl font-bold text-xs transition-colors ${
+                  section === sec
+                    ? "bg-indigo-600 text-white shadow-sm"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
               >
-                <Typography sx={{ flex: '1 1 100%', fontWeight: 'bold', textAlign: 'center' }} variant="h6" component="div">
-                  {selected.length > 0 ? `${selected.length} selected` : 'Courses'}
-                </Typography>
-                <Tooltip title={selected.length > 0 ? "Delete" : "Filter list"}>
-                  <IconButton>
-                    {selected.length > 0 ? <DeleteIcon /> : <FilterListIcon />}
-                  </IconButton>
-                </Tooltip>
-              </Toolbar>
+                {sec}
+              </button>
+            ))}
+          </div>
+        </div>
 
-              {/* Main Courses Table */}
-              <TableContainer>
-                <Table size={dense ? "small" : "medium"}>
-                  <TableHead>
-                    <TableRow sx={{ backgroundColor: '#E5E7EB' }}>
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          indeterminate={
-                            selected.length > 0 &&
-                            selected.length < sectionData[section]?.filter(row =>
-                              row.availableSeats > 0 &&
-                              !savedCourses.some(saved => saved.id === row.id)
-                            ).length
-                          }
-                          checked={
-                            sectionData[section]?.length > 0 &&
-                            selected.length === sectionData[section]?.filter(row =>
-                              row.availableSeats > 0 &&
-                              !savedCourses.some(saved => saved.id === row.id)
-                            ).length
-                          }
-                          onChange={(event) => {
-                            if (event.target.checked) {
-                              const unsavedSelectableIds = sectionData[section]
-                                .filter(row => row.availableSeats > 0 && !savedCourses.some(saved => saved.id === row.id))
-                                .map(row => row.id);
-                              setSelected(unsavedSelectableIds);
-                            } else {
-                              setSelected([]);
-                            }
-                          }}
-                        />
-                      </TableCell>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-500 font-medium">
+            {selected.length} {selected.length === 1 ? "course" : "courses"} selected
+          </span>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={selected.length === 0}
+            startIcon={<SaveIcon />}
+            onClick={handleSaveCourses}
+            sx={{
+              textTransform: "none",
+              borderRadius: 2.5,
+              fontWeight: 600,
+              fontSize: 12,
+              px: 2.5,
+              backgroundColor: "#4f46e5",
+            }}
+          >
+            Confirm Registration
+          </Button>
+        </div>
+      </div>
 
+      {/* Available Courses Table */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <HowToRegIcon className="w-4 h-4 text-indigo-600" />
+            <h2 className="text-sm font-bold text-slate-800">
+              Available Courses in Section {section}
+            </h2>
+          </div>
+          <span className="text-xs text-slate-500">
+            {sectionData[section]?.length || 0} Offerings
+          </span>
+        </div>
 
-                      <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 'bold' }}>Course Code</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 'bold' }}>Course Type</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 'bold' }}>Credit Hours</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 'bold' }}>Available / Not Available</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 'bold' }}>Information</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 'bold' }}>Teacher Name</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 'bold' }}>Timing</TableCell>
-                      <TableCell align="center" sx={{ fontWeight: 'bold' }}>Available Seats</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {sectionData[section]?.map((row) => (
-                      <TableRow key={row.id}>
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            checked={selected.includes(row.id)}
-                            disabled={row.availableSeats === 0 || savedCourses.some(saved => saved.id === row.id)}
-                            onChange={() => {
-                              if (row.availableSeats === 0) return;
-                              setSelected((prev) =>
-                                prev.includes(row.id)
-                                  ? prev.filter((id) => id !== row.id)
-                                  : [...prev, row.id]
-                              );
-                            }}
-                          />
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs whitespace-nowrap">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+                <th className="py-3 px-4 w-10 text-center">Select</th>
+                <th className="py-3 px-4">Course Name & Code</th>
+                <th className="py-3 px-4 text-center">Type</th>
+                <th className="py-3 px-4 text-center">Credit Hours</th>
+                <th className="py-3 px-4">Faculty Member</th>
+                <th className="py-3 px-4">Timing & Venue</th>
+                <th className="py-3 px-4 text-center">Available Seats</th>
+                <th className="py-3 px-4 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {sectionData[section]?.map((row) => {
+                const isSaved = savedCourses.some((c) => c.id === row.id);
+                const isSelected = selected.includes(row.id);
+                const isFull = row.availableSeats === 0;
 
-                        </TableCell>
-                        <TableCell>{row.name}</TableCell>
-                        <TableCell align="center">{row.courseCode}</TableCell>
-                        <TableCell align="center">{row.courseType}</TableCell>
-                        <TableCell align="center">{row.creditHours}</TableCell>
-                        <TableCell align="center">{row.availableSeats === 0 ? 'Not Available' : 'Available'}</TableCell>
-                        <TableCell align="center">{row.info}</TableCell>
-                        <TableCell align="center">{row.teacher}</TableCell>
-                        <TableCell align="center">{row.timing}</TableCell>
-                        <TableCell align="center">{row.availableSeats}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                <FormControlLabel
-                  control={<Switch checked={dense} onChange={() => setDense(!dense)} />}
-                  label="Dense padding"
-                />
-
-                <Tooltip title="Save selected courses">
-                  <Button
-                    onClick={handleSave}
-                    variant="outlined"
-                    color="primary"
-                    size="large"
-                    startIcon={<SaveIcon />}
-                    sx={{ ml: 2 }}
+                return (
+                  <tr
+                    key={row.id}
+                    onClick={() => !isSaved && !isFull && handleToggleSelect(row.id)}
+                    className={`transition-colors ${
+                      isSaved
+                        ? "bg-slate-50/80 opacity-60 cursor-not-allowed"
+                        : isFull
+                        ? "bg-red-50/30 opacity-60 cursor-not-allowed"
+                        : "hover:bg-slate-50/80 cursor-pointer"
+                    }`}
                   >
-                    Save
-                  </Button>
-                </Tooltip>
+                    <td className="py-3 px-4 text-center" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        type="checkbox"
+                        checked={isSelected || isSaved}
+                        disabled={isSaved || isFull}
+                        onChange={() => handleToggleSelect(row.id)}
+                        className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                      />
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="font-semibold text-slate-900">{row.name}</div>
+                      <span className="text-[11px] font-mono text-slate-400">{row.courseCode}</span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="inline-block px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-medium">
+                        {row.courseType}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center font-mono font-bold text-slate-800">
+                      {row.creditHours}
+                    </td>
+                    <td className="py-3 px-4 text-slate-600">{row.teacher}</td>
+                    <td className="py-3 px-4 text-slate-600 font-mono text-[11px]">{row.timing}</td>
+                    <td className="py-3 px-4 text-center font-mono font-semibold">
+                      <span className={isFull ? "text-red-600" : "text-emerald-700"}>
+                        {row.availableSeats} Seats
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      {isSaved ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                          <CheckCircleIcon className="w-3 h-3" />
+                          Enrolled
+                        </span>
+                      ) : isFull ? (
+                        <span className="inline-block text-[10px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded-full">
+                          Closed
+                        </span>
+                      ) : (
+                        <span className="inline-block text-[10px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full">
+                          Open
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-              </Box>
+      {/* Confirmed Courses Tray */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CheckCircleIcon className="w-4 h-4 text-emerald-600" />
+            <h2 className="text-sm font-bold text-slate-800">Confirmed Enrolled Courses</h2>
+          </div>
+          <span className="text-xs text-slate-500">{savedCourses.length} Registered</span>
+        </div>
 
-
-              <Box sx={{ mt: 4 }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', textAlign: 'center' }}>
-                  Confirmed Courses
-                </Typography>
-
-                {savedCourses.length === 0 ? (
-                  <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
-                    No Confirmed Courses
-                  </Typography>
-                ) : (
-
-                  // {/* Confirmed Courses Table */}
-                  <TableContainer component={Paper}>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow sx={{ backgroundColor: '#f3f4f6' }}>
-                          <TableCell align='left' sx={{ fontWeight: 'bold' }}>Sr. No</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold' }}>Course Code</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold' }}>Course Type</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold' }}>Credit Hours</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold' }}>Information</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold' }}>Teacher Name</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold' }}>Timing</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold' }}>Delete</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {savedCourses.map((row, index) => (
-                          <TableRow key={row.id}>
-                            <TableCell>{index + 1}</TableCell>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell align="center">{row.courseCode}</TableCell>
-                            <TableCell align="center">{row.courseType}</TableCell>
-                            <TableCell align="center">{row.creditHours}</TableCell>
-                            <TableCell align="center">{row.info}</TableCell>
-                            <TableCell align="center">{row.teacher}</TableCell>
-                            <TableCell align="center">{row.timing}</TableCell>
-                            <TableCell align="center">
-                              <IconButton
-                                onClick={() => {
-                                  setRowToDelete(row.id);
-                                  setOpen(true);
-                                }}
-                              >
-                                <DeleteIcon fontSize="medium" />
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                )}
-              </Box>
-
-            </>
-          ) : (
-            <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
-              Please select a section to register courses
-            </Typography>
-          )}
-        </Box>
-      </Paper>
-    </>
-  )
-}
-
+        {savedCourses.length === 0 ? (
+          <div className="p-8 text-center text-slate-400">
+            <p className="text-sm font-medium">No courses confirmed yet. Select courses above and click "Confirm Registration".</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs whitespace-nowrap">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+                  <th className="py-3 px-4">#</th>
+                  <th className="py-3 px-4">Course Name</th>
+                  <th className="py-3 px-4">Course Code</th>
+                  <th className="py-3 px-4 text-center">Cr. Hrs</th>
+                  <th className="py-3 px-4">Instructor</th>
+                  <th className="py-3 px-4">Schedule</th>
+                  <th className="py-3 px-4 text-center">Drop</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {savedCourses.map((c, idx) => (
+                  <tr key={c.id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="py-3 px-4 font-mono text-slate-400">{idx + 1}</td>
+                    <td className="py-3 px-4 font-semibold text-slate-900">{c.name}</td>
+                    <td className="py-3 px-4 font-mono text-slate-500">{c.courseCode}</td>
+                    <td className="py-3 px-4 text-center font-mono font-bold text-slate-800">{c.creditHours}</td>
+                    <td className="py-3 px-4 text-slate-600">{c.teacher}</td>
+                    <td className="py-3 px-4 text-slate-600 font-mono text-[11px]">{c.timing}</td>
+                    <td className="py-3 px-4 text-center">
+                      <Tooltip title="Drop Course">
+                        <IconButton
+                          size="small"
+                          onClick={() => {
+                            setCourseToDelete(c.id);
+                            setDeleteModalOpen(true);
+                          }}
+                          className="text-red-500 hover:bg-red-50"
+                        >
+                          <DeleteIcon className="w-4 h-4 text-red-500" />
+                        </IconButton>
+                      </Tooltip>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default Registration;

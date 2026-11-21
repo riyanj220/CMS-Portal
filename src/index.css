@@ -65,44 +65,45 @@
 html,
 body {
   height: 100%;
-  /* Ensure full height */
+  margin: 0;
+  padding: 0;
   overflow: auto;
 }
 
-/* Apply to small devices and smaller than small devices */
-@media (min-width: 640px) {
-  html,
-  body {
-    /* overflow-y: hidden; */
-    height: 100vh;
-  }
-}
-
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+
   html, body, #root {
+    background: #ffffff !important;
+    color: #000000 !important;
     height: auto !important;
     min-height: 0 !important;
     overflow: visible !important;
   }
+
+  .no-print, header, nav, aside {
+    display: none !important;
+  }
+
   .h-screen, .flex-1, .overflow-hidden, .overflow-y-auto, .relative {
     height: auto !important;
     min-height: 0 !important;
     max-height: none !important;
     overflow: visible !important;
   }
-  /* Optional: force admit card container to page-break naturally */
-  .admit-card-print-container {
+
+  .admit-card-print-container, .transcript-print-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
     page-break-inside: avoid;
-    page-break-after: auto;
-    /* Remove fixed height/margins if set */
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: visible !important;
-  }
-  
-  .no-print {
-    display: none !important;
+    break-inside: avoid;
   }
 }
 

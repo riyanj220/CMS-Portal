@@ -1,311 +1,306 @@
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Button, Select, MenuItem, FormControl, InputLabel, useMediaQuery, IconButton } from "@mui/material";
-import { useEffect, useState } from "react";
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import { useState, useEffect } from "react";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 
 interface Task {
-    id: number;
-    task: string;
-    dueDate: string;
-    createdDate: string;
-    priority: string;
-    status: string;
-    active: boolean;
+  id: number;
+  task: string;
+  dueDate: string;
+  priority: "High" | "Normal" | "Low";
+  status: "Not Started" | "In Progress" | "Completed";
 }
 
+const defaultTasks: Task[] = [
+  { id: 1, task: "Prepare Software Architecture Lab Report 4", dueDate: "2025-05-25", priority: "High", status: "In Progress" },
+  { id: 2, task: "Submit Online Course Evaluation Survey", dueDate: "2025-05-28", priority: "Normal", status: "Not Started" },
+  { id: 3, task: "Review Probability & Statistics Chapter 5", dueDate: "2025-05-30", priority: "High", status: "Completed" },
+  { id: 4, task: "Fee Voucher Payment Clearance", dueDate: "2025-05-30", priority: "High", status: "In Progress" },
+];
+
 const TodoList = () => {
-    const [tasks, setTasks] = useState<Task[]>([]);
-    const [taskInput, setTaskInput] = useState("");
-    const [dueDateInput, setDueDateInput] = useState("");
-    const [priorityInput, setPriorityInput] = useState("Normal");
-    const [statusInput, setStatusInput] = useState("Not Started");
-    const [activeInput, setActiveInput] = useState(false);
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    try {
+      const stored = localStorage.getItem("tasks");
+      return stored ? JSON.parse(stored) : defaultTasks;
+    } catch {
+      return defaultTasks;
+    }
+  });
 
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [isFocused, setIsFocused] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [taskText, setTaskText] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [priority, setPriority] = useState<"High" | "Normal" | "Low">("Normal");
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-    const [editingTask, setEditingTask] = useState<Task | null>(null);
+  // Sync to localStorage
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
-    const [taskError, setTaskError] = useState(false);
-    const [dueDateError, setDueDateError] = useState(false);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!taskText.trim()) return;
 
-    // Handle Page Change for Pagination
-    const handleChangePage = (_event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
+    if (editingId !== null) {
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.id === editingId
+            ? { ...t, task: taskText, dueDate: dueDate || "No date", priority }
+            : t
+        )
+      );
+      setEditingId(null);
+    } else {
+      const newTask: Task = {
+        id: Date.now(),
+        task: taskText,
+        dueDate: dueDate || "No date",
+        priority,
+        status: "Not Started",
+      };
+      setTasks((prev) => [newTask, ...prev]);
+    }
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
+    setTaskText("");
+    setDueDate("");
+    setPriority("Normal");
+    setFormOpen(false);
+  };
 
-    // Load tasks from localStorage when component mounts
-    useEffect(() => {
-        const savedTasks = localStorage.getItem("tasks");
-        if (savedTasks) {
-            setTasks(JSON.parse(savedTasks));
-        }
-    }, []);
+  const handleEdit = (task: Task) => {
+    setEditingId(task.id);
+    setTaskText(task.task);
+    setDueDate(task.dueDate !== "No date" ? task.dueDate : "");
+    setPriority(task.priority);
+    setFormOpen(true);
+  };
 
-    // Save tasks to localStorage whenever tasks state changes
-    useEffect(() => {
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-    }, [tasks]);
+  const handleDelete = (id: number) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  };
 
-    // Columns for the table
-    const columns = [
-        { id: "task", label: "Task" },
-        { id: "dueDate", label: "Due Date" },
-        { id: "createdDate", label: "Created Date" },
-        { id: "activeStatus", label: "Active Status" },
-        { id: "status", label: "Status" },
-        { id: "priority", label: "Priority" },
-        { id: "edit", label: "Edit" },
-        { id: "delete", label: "Delete" },
-    ];
-
-
-    // Handle Add Task
-    const addTask = () => {
-        if (!taskInput || !dueDateInput) {
-            if (!taskInput) setTaskError(true);
-            if (!dueDateInput) setDueDateError(true);
-            return;
-        }
-        if (taskInput && dueDateInput) {
-            const newTask: Task = {
-                id: Date.now(),
-                task: taskInput,
-                dueDate: dueDateInput,
-                createdDate: new Date().toLocaleDateString(),
-                priority: priorityInput,
-                status: statusInput,
-                active: activeInput,
-            };
-            setTasks((prevTasks) => [...prevTasks, newTask]);
-            setTaskInput(""); // Clear input fields after adding task
-            setDueDateInput("");
-            setPriorityInput("Normal");
-            setStatusInput("Not Started");
-            setActiveInput(false);
-            setTaskError(false); // Reset errors after adding the task
-            setDueDateError(false);
-        }
-    };
-
-    // Handle Status Change
-    const handleStatusChange = (id: number, newStatus: string) => {
-        const updatedTasks = tasks.map((task) =>
-            task.id === id ? { ...task, status: newStatus } : task
-        );
-        setTasks(updatedTasks);
-    };
-
-    // Handle Task Delete
-    const deleteTask = (id: number) => {
-        const updatedTasks = tasks.filter((task) => task.id !== id);
-        setTasks(updatedTasks);
-    };
-
-    const startEditing = (task: Task) => {
-        setEditingTask(task);
-        setTaskInput(task.task);
-        setDueDateInput(task.dueDate);
-        setPriorityInput(task.priority);
-        setStatusInput(task.status);
-        setActiveInput(task.active);
-    };
-
-    const updateTask = () => {
-        if (editingTask) {
-            const updatedTasks = tasks.map((task) =>
-                task.id === editingTask.id
-                    ? { ...task, task: taskInput, dueDate: dueDateInput, priority: priorityInput, status: statusInput, active: activeInput }
-                    : task
-            );
-            setTasks(updatedTasks);
-            clearForm();
-        }
-    };
-
-    const clearForm = () => {
-        setEditingTask(null);
-        setTaskInput("");
-        setDueDateInput("");
-        setPriorityInput("Normal");
-        setStatusInput("Not Started");
-        setActiveInput(false);
-    };
-
-    const isSmallScreen = useMediaQuery("(max-width:600px)");
-
-    return (
-
-        <Paper sx={{ width: "100%" }}>
-            {/* Sticky Heading */}
-            <Box
-                sx={{
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 2,
-                    backgroundColor: "white",
-                    textAlign: "center",
-                    py: 2,
-                }}
-            >
-                <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Todo List</div>
-            </Box>
-
-            {/* Task Form */}
-            <Box sx={{ width: '100%', overflowX: 'auto' ,display:"flex", justifyContent:"center"}}>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        minWidth: '300px',
-                        padding: 2,
-                        flexShrink: 0, // prevents shrinking inside flex parent
-                        flexDirection:"column",
-                        width: '100%',
-                        maxWidth: '50rem',       // this limits the width
-                    }}
-                >
-                    <TextField
-                        label="Task"
-                        value={taskInput}
-                        onChange={(e) => setTaskInput(e.target.value)}
-                        fullWidth
-                        sx={{ marginBottom: 2 }}
-                        error={taskError}
-                        helperText={taskError ? "Task cannot be empty" : ""}
-                    />
-                    <TextField
-                        label="Due Date"
-                        value={dueDateInput}
-                        onChange={(e) => setDueDateInput(e.target.value)}
-                        fullWidth
-                        sx={{ marginBottom: 2 }}
-                        type={isFocused ? "date" : "text"} // Conditionally change type based on focus
-                        onFocus={() => setIsFocused(true)}  // Set focus state to true when focused
-                        onBlur={() => setIsFocused(false)} // Set focus state to false when blurred
-                        error={dueDateError}
-                        helperText={dueDateError ? "Due date cannot be empty" : ""}
-                    />
-                    <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                        <InputLabel>Priority</InputLabel>
-                        <Select
-                            value={priorityInput}
-                            onChange={(e) => setPriorityInput(e.target.value)}
-                            label="Priority"
-                        >
-                            <MenuItem value="Low">Low</MenuItem>
-                            <MenuItem value="Normal">Normal</MenuItem>
-                            <MenuItem value="High">High</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                        <InputLabel>Status</InputLabel>
-                        <Select
-                            value={statusInput}
-                            onChange={(e) => setStatusInput(e.target.value)}
-                            label="Status"
-                        >
-                            <MenuItem value="Not Started">Not Started</MenuItem>
-                            <MenuItem value="In Progress">In Progress</MenuItem>
-                            <MenuItem value="Completed">Completed</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                        <InputLabel>Active</InputLabel>
-                        <Select
-                            value={activeInput ? "Active" : "Inactive"}
-                            onChange={(e) => setActiveInput(e.target.value === "Active")}
-                            label="Active"
-                        >
-                            <MenuItem value="Active">Active</MenuItem>
-                            <MenuItem value="Inactive">Inactive</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                        <Button variant="contained" size={isSmallScreen ? "medium" : "large"} color="primary" onClick={editingTask ? updateTask : addTask}>
-                            {editingTask ? "Update Task" : "Add Task"}
-                        </Button>
-                    </Box>
-                </Box>
-            </Box>
-
-            <TableContainer sx={{ maxHeight: { xs: 500, sm: 600 } }}>
-                <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
-                            {columns.map((column) => (
-                                <TableCell
-                                    key={column.id}
-                                    sx={{
-                                        backgroundColor: "#E5E7EB", // Tailwind gray-200 hex color
-                                        fontWeight: "bold",
-                                    }}
-                                >
-                                    {column.label}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {tasks
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((task) => (
-                                <TableRow hover role="checkbox" tabIndex={-1} key={task.id}>
-                                    <TableCell>{task.task}</TableCell>
-                                    <TableCell>{task.dueDate}</TableCell>
-                                    <TableCell>{task.createdDate}</TableCell>
-                                    <TableCell>{task.active ? "Active" : "Inactive"}</TableCell>
-                                    <TableCell>
-                                        <select
-                                            className="p-2 border border-gray-300 rounded-md"
-                                            value={task.status}
-                                            onChange={(e) => handleStatusChange(task.id, e.target.value)}
-                                        >
-                                            <option value="Not Started">Not Started</option>
-                                            <option value="In Progress">In Progress</option>
-                                            <option value="Completed">Completed</option>
-                                        </select>
-                                    </TableCell>
-                                    <TableCell>{task.priority}</TableCell>
-                                    <TableCell sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                        <IconButton
-                                            sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-                                            color="primary"
-                                            onClick={() => startEditing(task)}
-                                        >
-                                            <EditIcon />
-                                        </IconButton>
-                                    </TableCell>
-                                    <TableCell>
-                                        <IconButton
-                                            color="error"
-                                            onClick={() => deleteTask(task.id)}
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-
-            <TablePagination
-                rowsPerPageOptions={[10, 25, 100]}
-                component="div"
-                count={tasks.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </Paper>
+  const handleToggleStatus = (id: number) => {
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === id
+          ? {
+              ...t,
+              status: t.status === "Completed" ? "In Progress" : "Completed",
+            }
+          : t
+      )
     );
+  };
+
+  return (
+    <div className="space-y-6 pb-12">
+      {/* Header Banner */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-indigo-600" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
+                Productivity & Study Planner
+              </span>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">
+              Academic To-Do List
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+              Keep track of assignment submissions, lab records, and exam milestones
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              setEditingId(null);
+              setTaskText("");
+              setDueDate("");
+              setFormOpen(!formOpen);
+            }}
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm transition-colors self-start sm:self-auto"
+          >
+            <AddIcon className="w-4 h-4" />
+            <span>{formOpen ? "Close Form" : "Add New Task"}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Task Creation / Edit Card */}
+      {formOpen && (
+        <div className="bg-white rounded-2xl border border-indigo-200 shadow-md p-5 animate-in fade-in duration-200">
+          <h2 className="text-sm font-bold text-slate-800 mb-3">
+            {editingId ? "Edit Academic Task" : "Create New Task"}
+          </h2>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div className="sm:col-span-2">
+              <label className="block font-semibold text-slate-700 mb-1">Task Title / Description</label>
+              <input
+                type="text"
+                placeholder="e.g. Complete Database ERD Assignment 2"
+                value={taskText}
+                onChange={(e) => setTaskText(e.target.value)}
+                required
+                className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Due Date</label>
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Priority</label>
+              <select
+                value={priority}
+                onChange={(e) => setPriority(e.target.value as any)}
+                className="w-full text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="High">High</option>
+                <option value="Normal">Normal</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+
+            <div className="sm:col-span-2 flex items-end justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setFormOpen(false)}
+                className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm"
+              >
+                {editingId ? "Update Task" : "Save Task"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Tasks Table Card */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-slate-800">My Study Tasks</h2>
+          <span className="text-xs text-slate-500">{tasks.length} Total</span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs whitespace-nowrap">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+                <th className="py-3 px-4 w-10 text-center">Status</th>
+                <th className="py-3 px-4">Task Description</th>
+                <th className="py-3 px-4">Due Date</th>
+                <th className="py-3 px-4 text-center">Priority</th>
+                <th className="py-3 px-4 text-center">Current State</th>
+                <th className="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {tasks.length > 0 ? (
+                tasks.map((task) => {
+                  const isDone = task.status === "Completed";
+                  const isInProgress = task.status === "In Progress";
+
+                  return (
+                    <tr key={task.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-3 px-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleStatus(task.id)}
+                          className={isDone ? "text-emerald-500" : "text-slate-400 hover:text-indigo-600"}
+                        >
+                          {isDone ? (
+                            <CheckCircleOutlineIcon className="w-4 h-4" />
+                          ) : (
+                            <RadioButtonUncheckedIcon className="w-4 h-4" />
+                          )}
+                        </button>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className={`font-semibold text-slate-800 ${isDone ? "line-through text-slate-400" : ""}`}>
+                          {task.task}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 font-mono text-slate-500">{task.dueDate}</td>
+                      <td className="py-3 px-4 text-center">
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
+                            task.priority === "High"
+                              ? "bg-red-50 text-red-700"
+                              : task.priority === "Normal"
+                              ? "bg-blue-50 text-blue-700"
+                              : "bg-slate-100 text-slate-700"
+                          }`}
+                        >
+                          {task.priority}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <span
+                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
+                            isDone
+                              ? "bg-emerald-50 text-emerald-700"
+                              : isInProgress
+                              ? "bg-amber-50 text-amber-700"
+                              : "bg-slate-100 text-slate-600"
+                          }`}
+                        >
+                          {task.status}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => handleEdit(task)}
+                            className="p-1 rounded text-slate-400 hover:text-indigo-600 hover:bg-slate-100"
+                            title="Edit Task"
+                          >
+                            <EditIcon className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(task.id)}
+                            className="p-1 rounded text-slate-400 hover:text-red-600 hover:bg-red-50"
+                            title="Delete Task"
+                          >
+                            <DeleteIcon className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-slate-400">
+                    No academic tasks scheduled. Add your first study task above.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default TodoList;

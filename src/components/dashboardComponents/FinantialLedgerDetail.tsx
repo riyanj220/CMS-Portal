@@ -1,232 +1,184 @@
-import * as React from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import { Box, Typography } from '@mui/material';
+import { useState } from "react";
+import { Link } from "react-router";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PrintIcon from "@mui/icons-material/Print";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
-interface Column {
-    id:
-    | 'date'
-    | 'transactionType'
-    | 'feeBillNo'
-    | 'feeNature'
-    | 'session'
-    | 'date1'
-    | 'debit'
-    | 'credit'
-    | 'charging'
-    | 'amount'
-    | 'currentBalance';
-    label: string;
-    minWidth?: number;
-    align?: 'right' | 'left';
-    format?: (value: number) => string;
+interface LedgerRow {
+  date: string;
+  type: string;
+  billNo: string;
+  nature: string;
+  session: string;
+  debit: number;
+  credit: number;
+  balance: number;
 }
 
-const columns: readonly Column[] = [
-    { id: 'date', label: 'DATE', minWidth: 130 },
-    { id: 'transactionType', label: 'TRANSACTION TYPE', minWidth: 130 },
-    { id: 'feeBillNo', label: 'FEE BILL NO', minWidth: 130 },
-    { id: 'feeNature', label: 'FEE NATURE', minWidth: 170 },
-    { id: 'session', label: 'SESSION', minWidth: 130 },
-    { id: 'date1', label: 'DATE1', minWidth: 130 },
-    { id: 'debit', label: 'DEBIT', minWidth: 100, align: 'right', format: (value) => value.toFixed(2) },
-    { id: 'credit', label: 'CREDIT', minWidth: 100, align: 'right', format: (value) => value.toFixed(2) },
-    { id: 'charging', label: 'CHARGING', minWidth: 100, align: 'right', format: (value) => value.toFixed(2) },
-    { id: 'amount', label: 'AMOUNT', minWidth: 100, align: 'right', format: (value) => value.toFixed(2) },
-    { id: 'currentBalance', label: 'CURRENT BALANCE', minWidth: 130, align: 'right', format: (value) => value.toFixed(2) },
-];
-
-interface Data {
-    date: string;
-    transactionType: string;
-    feeBillNo: string;
-    feeNature: string;
-    session: string;
-    date1: string;
-    debit: number;
-    credit: number;
-    charging: number;
-    amount: number;
-    currentBalance: number;
-}
-
-function createData(
-    date: string,
-    transactionType: string,
-    feeBillNo: string,
-    feeNature: string,
-    session: string,
-    date1: string,
-    debit: number,
-    credit: number,
-    charging: number,
-    amount: number,
-    currentBalance: number
-): Data {
-    return { date, transactionType, feeBillNo, feeNature, session, date1, debit, credit, charging, amount, currentBalance };
-}
-
-const rows = [
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Students Activities', 'Fall 2023', '9/5/2023 12:00:00 AM', 1100.00, 0.00, 1100.00, 0.00, 1100.00),
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Security Deposit (Refundable)', 'Fall 2023', '9/5/2023 12:00:00 AM', 5000.00, 0.00, 5000.00, 0.00, 6100.00),
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Examination', 'Fall 2023', '9/5/2023 12:00:00 AM', 5200.00, 0.00, 5200.00, 0.00, 11300.00),
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Examination', 'Fall 2023', '9/5/2023 12:00:00 AM', 5200.00, 0.00, 5200.00, 0.00, 11300.00),
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Examination', 'Fall 2023', '9/5/2023 12:00:00 AM', 5200.00, 0.00, 5200.00, 0.00, 11300.00),
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Examination', 'Fall 2023', '9/5/2023 12:00:00 AM', 5200.00, 0.00, 5200.00, 0.00, 11300.00),
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Examination', 'Fall 2023', '9/5/2023 12:00:00 AM', 5200.00, 0.00, 5200.00, 0.00, 11300.00),
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Examination', 'Fall 2023', '9/5/2023 12:00:00 AM', 5200.00, 0.00, 5200.00, 0.00, 11300.00),
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Examination', 'Fall 2023', '9/5/2023 12:00:00 AM', 5200.00, 0.00, 5200.00, 0.00, 11300.00),
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Examination', 'Fall 2023', '9/5/2023 12:00:00 AM', 5200.00, 0.00, 5200.00, 0.00, 11300.00),
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Examination', 'Fall 2023', '9/5/2023 12:00:00 AM', 5200.00, 0.00, 5200.00, 0.00, 11300.00),
-    createData('9/5/2023 12:00:00 AM', 'Receivable', '1881341', 'Examination', 'Fall 2023', '9/5/2023 12:00:00 AM', 5200.00, 0.00, 5200.00, 0.00, 11300.00),
+const ledgerRows: LedgerRow[] = [
+  { date: "19-Apr-2025", type: "Charge", billNo: "FB-2025S-101", nature: "Tuition Fee", session: "Spring 2025", debit: 102000, credit: 0, balance: 119800 },
+  { date: "19-Apr-2025", type: "Charge", billNo: "FB-2025S-102", nature: "Students Activities", session: "Spring 2025", debit: 1100, credit: 0, balance: 17800 },
+  { date: "19-Apr-2025", type: "Charge", billNo: "FB-2025S-103", nature: "Examination Fee", session: "Spring 2025", debit: 11000, credit: 0, balance: 16700 },
+  { date: "19-Apr-2025", type: "Charge", billNo: "FB-2025S-104", nature: "IT & Infrastructure", session: "Spring 2025", debit: 5700, credit: 0, balance: 5700 },
+  { date: "15-Aug-2024", type: "Payment", billNo: "KP-992023075", nature: "Online Payment (KuickPay)", session: "Fall 2024", debit: 0, credit: 98000, balance: 0 },
+  { date: "10-Aug-2024", type: "Charge", billNo: "FB-2024F-882", nature: "Tuition Fee", session: "Fall 2024", debit: 98000, credit: 0, balance: 98000 },
+  { date: "10-Feb-2024", type: "Payment", billNo: "MB-2024S-004", nature: "Bank Deposit (Meezan)", session: "Spring 2024", debit: 0, credit: 92000, balance: 0 },
+  { date: "05-Feb-2024", type: "Charge", billNo: "FB-2024S-441", nature: "Tuition Fee", session: "Spring 2024", debit: 92000, credit: 0, balance: 92000 },
+  { date: "05-Sep-2023", type: "Payment", billNo: "ABL-2023F-11", nature: "Admission Dues (Allied Bank)", session: "Fall 2023", debit: 0, credit: 115000, balance: 0 },
+  { date: "01-Sep-2023", type: "Charge", billNo: "FB-2023F-001", nature: "Admission & 1st Semester Fee", session: "Fall 2023", debit: 115000, credit: 0, balance: 115000 },
 ];
 
 export default function FinantialLedgerDetail() {
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [filterSession, setFilterSession] = useState("All");
 
-    const handleChangePage = (_event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
+  const filtered = filterSession === "All"
+    ? ledgerRows
+    : ledgerRows.filter((r) => r.session === filterSession);
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
-
-    return (
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            {/* Student Info Section */}
-            <Box
-                sx={{
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 2,
-                    backgroundColor: "white",
-                    textAlign: "center",
-                    py: 2,
-                    mt: 2
-                }}
+  return (
+    <div className="space-y-6 pb-12">
+      {/* Header Banner */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-6 no-print">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Link
+              to="/dashboard"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+              title="Back to Dashboard"
             >
-                <div className="text-xl font-semibold text-gray-800 sm:text-2xl sm:mb-4 md:text-3xl">Finantial Ledger Details</div>
-            </Box>
+              <ArrowBackIcon className="w-4 h-4" />
+            </Link>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-indigo-600" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
+                  Student Accounts Statement
+                </span>
+              </div>
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">
+                Financial Ledger Statement
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                Complete debit/credit transaction history and vouchers
+              </p>
+            </div>
+          </div>
 
-            <Box
-                sx={{
-                    px: 3,
-                    py: 2,
-                    fontSize: 14,
-                    color: 'text.primary',
-                    borderRadius: 2,
-                    backgroundColor: '#f5f7fa', // subtle light background
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-                    maxWidth: 600,
-                    mx: 'auto', // center horizontally
-                    mb: 3,
-                    lineHeight: 1.6,
-                }}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-colors"
             >
-                <Typography sx={{ mb: 0.8 }}>
-                    <strong>REPORT DATE:</strong> 01-Jun-2025 04:06:20
-                </Typography>
-                <Typography sx={{ mb: 0.8 }}>
-                    <strong>Student:</strong> 2023F-BSE-075 / RIYAN JAMIL
-                </Typography>
-                <Typography sx={{ mb: 0.8 }}>
-                    <strong>Program Structure:</strong> (BS) - Software Engineering - MOR
-                </Typography>
-                <Typography sx={{ mb: 0 }}>
-                    <strong>Current Balance:</strong> 119800
-                </Typography>
-            </Box>
+              <PrintIcon className="w-3.5 h-3.5" />
+              <span>Print Statement</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
-            <TableContainer
-                component={Paper}
-                sx={{
-                    maxHeight: 400,
-                    overflowX: "auto",
-                    m: 2,
-                    pr: 2,
-                    borderRadius: 2,
-                    // 👇 Custom scrollbar styling
-                    "&::-webkit-scrollbar": {
-                        width: "6px",         // narrow width
-                        height: "6px",
-                    },
-                    "&::-webkit-scrollbar-thumb": {
-                        backgroundColor: "#c4b5fd", // soft purple scroll thumb
-                        borderRadius: "3px",
-                    },
-                    "&::-webkit-scrollbar-track": {
-                        backgroundColor: "#f3f4f6", // light gray track
-                    },
-                    scrollbarWidth: "thin", // for Firefox
-                    scrollbarColor: "#c4b5fd #f3f4f6",
-                }}
+      {/* Student Statement Metadata Card */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 font-medium block text-[11px]">Student Name & ID</span>
+            <span className="font-bold text-slate-900 mt-0.5 block text-sm">Riyan Jamil</span>
+            <span className="font-mono text-indigo-600 font-semibold text-xs">2023F-BSE-075</span>
+          </div>
+
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 font-medium block text-[11px]">Academic Program</span>
+            <span className="font-bold text-slate-900 mt-0.5 block text-sm">BS Software Engineering</span>
+            <span className="text-slate-500 text-xs">Batch 2023F • Morning</span>
+          </div>
+
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <span className="text-slate-400 font-medium block text-[11px]">Report Generated Date</span>
+            <span className="font-bold text-slate-900 mt-0.5 block text-sm">15-May-2025</span>
+            <span className="text-slate-500 text-xs">10:45:22 AM PKT</span>
+          </div>
+
+          <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900">
+            <span className="text-amber-700 font-semibold block text-[11px]">Current Outstanding Balance</span>
+            <span className="font-extrabold text-amber-900 mt-0.5 block text-xl font-mono">
+              PKR 119,800.00
+            </span>
+            <span className="text-amber-700 text-xs font-medium">Due for Spring 2025</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Ledger Table */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <AccountBalanceWalletIcon className="w-4 h-4 text-indigo-600" />
+            <h2 className="text-sm font-bold text-slate-800">Ledger Audit Entries</h2>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs">
+            <label className="text-slate-500 font-medium">Filter Session:</label>
+            <select
+              value={filterSession}
+              onChange={(e) => setFilterSession(e.target.value)}
+              className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-                <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
-                            {columns.map((column) => (
-                                <TableCell
-                                    key={column.id}
-                                    align={column.align}
-                                    style={{ minWidth: column.minWidth }}
-                                    sx={{ backgroundColor: '#E5E7EB', fontWeight: 'bold' }}
-                                >
-                                    {column.label}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {rows
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row, index) => {
-                                return (
-                                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                                        {columns.map((column) => {
-                                            const value = row[column.id];
-                                            return (
-                                                <TableCell key={column.id} align={column.align}>
-                                                    {column.format && typeof value === 'number'
-                                                        ? column.format(value)
-                                                        : value}
-                                                </TableCell>
-                                            );
-                                        })}
-                                    </TableRow>
-                                );
-                            })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+              <option value="All">All Sessions</option>
+              <option value="Spring 2025">Spring 2025</option>
+              <option value="Fall 2024">Fall 2024</option>
+              <option value="Spring 2024">Spring 2024</option>
+              <option value="Fall 2023">Fall 2023</option>
+            </select>
+          </div>
+        </div>
 
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 6, pr: 3, mt: 1, mb: 1 }}>
-                <Box sx={{ textAlign: 'right' }}>
-                    <Typography sx={{ fontWeight: 'bold' }}>Total :</Typography>
-                    <Typography sx={{ fontWeight: 'bold' }}>483000.00</Typography>
-                </Box>
-                <Box sx={{ textAlign: 'right' }}>
-                    <Typography sx={{ fontWeight: 'bold' }}>Total :</Typography>
-                    <Typography sx={{ fontWeight: 'bold' }}>363200.00</Typography>
-                </Box>
-            </Box>
-            <TablePagination
-                rowsPerPageOptions={[10, 25, 100]}
-                component="div"
-                count={rows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </Paper>
-    );
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs whitespace-nowrap">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+                <th className="py-3 px-4">Date</th>
+                <th className="py-3 px-4">Type</th>
+                <th className="py-3 px-4">Voucher / Bill No</th>
+                <th className="py-3 px-4">Description / Fee Nature</th>
+                <th className="py-3 px-4">Session</th>
+                <th className="py-3 px-4 text-right">Debit (PKR)</th>
+                <th className="py-3 px-4 text-right">Credit (PKR)</th>
+                <th className="py-3 px-4 text-right">Running Balance</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filtered.map((r, idx) => (
+                <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                  <td className="py-3.5 px-4 font-mono text-slate-700">{r.date}</td>
+                  <td className="py-3.5 px-4">
+                    <span
+                      className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
+                        r.type === "Payment"
+                          ? "bg-emerald-50 text-emerald-700"
+                          : "bg-amber-50 text-amber-700"
+                      }`}
+                    >
+                      {r.type}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-4 font-mono text-slate-500">{r.billNo}</td>
+                  <td className="py-3.5 px-4 font-semibold text-slate-800">{r.nature}</td>
+                  <td className="py-3.5 px-4 text-slate-500">{r.session}</td>
+                  <td className="py-3.5 px-4 text-right font-mono font-medium text-slate-900">
+                    {r.debit > 0 ? r.debit.toLocaleString() + ".00" : "-"}
+                  </td>
+                  <td className="py-3.5 px-4 text-right font-mono font-medium text-emerald-700">
+                    {r.credit > 0 ? r.credit.toLocaleString() + ".00" : "-"}
+                  </td>
+                  <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900">
+                    {r.balance.toLocaleString()}.00
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
 }

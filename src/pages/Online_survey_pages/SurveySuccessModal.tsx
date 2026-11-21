@@ -38,7 +38,7 @@ export default function SurveySuccessModal({ open, user }: SurveySuccessModalPro
                     top: "50%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
-                    width: { xs: 370, sm: 500, md: 570 },
+                    width: { xs: "92%", sm: 500, md: 570 },
                     bgcolor: "background.paper",
                     borderRadius: 4,
                     boxShadow: 15,
